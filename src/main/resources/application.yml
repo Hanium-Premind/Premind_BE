@@ -11,3 +11,12 @@ spring:
     hibernate:
       ddl-auto: update
     show_sql: true
+  jwt:
+  # 32글자 이상 인코딩된 문자열: premindserversecretaccesstokenpremindserversecretaccesstokenpremindserversecretaccesstoken
+    secret: cHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2Vu
+    access-expiration: 15 # minutes
+    refresh-expiration: 43200 # 30 days
+  data:
+    redis:
+      host: localhost
+      port: 6379
