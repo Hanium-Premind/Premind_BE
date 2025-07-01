@@ -1,4 +1,4 @@
-package com.example.Premind_BE.global.config;
+package com.example.Premind_BE.global.config.swagger;
 
 
 import io.swagger.v3.oas.models.OpenAPI;
