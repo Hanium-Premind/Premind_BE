@@ -20,9 +20,7 @@ public class UserService{
 
     public User userRegister(RegisterReqDto registerReqDto) {
         // 이미 존재하는 이메일로 회원가입시 오류 발생
-        if(userRepository.findByEmail(registerReqDto.getEmail()).isPresent()) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
-        }
+        emailCheck(registerReqDto.getEmail());
 
         // 회원가입 과정
         return userRepository.save(
@@ -38,6 +36,11 @@ public class UserService{
     }
 
 
-
-
+    public boolean emailCheck(String email) {
+        // 이미 존재하는 이메일로 회원가입시 오류 발생
+        if(userRepository.findByEmail(email).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+        }
+        return true; // 사용 가능
+    }
 }
