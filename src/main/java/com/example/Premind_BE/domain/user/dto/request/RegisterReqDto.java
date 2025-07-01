@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -29,6 +30,8 @@ public class RegisterReqDto {
     private Gender gender;
     @Schema(description = "사용자 전화번호, 01012345678 형식으로")
     private String phoneNumber;
+    @Schema(description = "관심 직무 리스트 예: ['developer', 'designer']")
+    private List<String> interestJobs;
 
     public LocalDate getBirthAsLocalDate() {
         return LocalDate.parse(this.birth, DateTimeFormatter.ofPattern("yyyyMMdd"));
