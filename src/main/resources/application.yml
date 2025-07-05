@@ -9,12 +9,12 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show_sql: true
   jwt:
   # 32글자 이상 인코딩된 문자열: premindserversecretaccesstokenpremindserversecretaccesstokenpremindserversecretaccesstoken
     secret: cHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2Vu
-    access-expiration: 15 # minutes
+    access-expiration: 1 # minutes
     refresh-expiration: 43200 # 30 days
   data:
     redis:

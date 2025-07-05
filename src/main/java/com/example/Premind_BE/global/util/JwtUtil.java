@@ -61,5 +61,9 @@ public class JwtUtil {
                 .compact();
     }
 
+    private Claims parseClaims(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
 
 }
