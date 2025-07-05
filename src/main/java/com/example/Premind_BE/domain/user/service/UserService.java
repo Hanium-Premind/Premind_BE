@@ -1,10 +1,15 @@
 package com.example.Premind_BE.domain.user.service;
 
+import com.example.Premind_BE.domain.password.dao.VerificationRecordRepository;
+import com.example.Premind_BE.domain.password.domain.VerificationRecord;
+import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
+import com.example.Premind_BE.domain.password.service.SmsService;
 import com.example.Premind_BE.domain.user.dao.InterestJobRepository;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.InterestJob;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
+import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -23,6 +28,8 @@ public class UserService{
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final InterestJobRepository interestJobRepository;
+    private final SmsService smsService;
+    private final VerificationRecordRepository verificationRecordRepository;
 
     public User userRegister(RegisterReqDto registerReqDto) {
         // 이미 존재하는 이메일로 회원가입시 오류 발생
@@ -68,4 +75,14 @@ public class UserService{
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
+    public void receiveCode(UserReceiveCodeReqDto sendCodeRequestDto) {
+        smsService.certificateSMS(sendCodeRequestDto.getPhoneNumber());
+    }
+
+    public void verifyCode(VerifyCodeReqDto verifyCodeReqDto) {
+        smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
+        verificationRecordRepository.save(
+                new VerificationRecord(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode())
+        );
+    }
 }

@@ -1,9 +1,15 @@
 package com.example.Premind_BE.domain.user.api;
 
+import com.example.Premind_BE.domain.password.dto.request.ReceiveCodeReqDto;
+import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
+import com.example.Premind_BE.domain.password.dto.response.ReceiveCodeResDto;
+import com.example.Premind_BE.domain.password.dto.response.VerifyCodeResDto;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
+import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.response.EmailCheckResDto;
 import com.example.Premind_BE.domain.user.service.UserService;
+import com.example.Premind_BE.global.common.response.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,7 +38,17 @@ public class UserController {
         return new EmailCheckResDto("사용 가능한 이메일입니다.", isAvailable);
     }
 
-    // 비밀번호 고치기
+    @Operation(summary = "회원가입에서 인증번호 받기", description = "회원가입에서 인증번호 받기")
+    @PostMapping("/receive/code")
+    public MessageDto receiveCode(@RequestBody UserReceiveCodeReqDto sendCodeRequestDto) {
+        userService.receiveCode(sendCodeRequestDto);
+        return new MessageDto("인증번호가 발송되었습니다.");
+    }
 
-    // 만약 전화번호 인증이 되면 인증 내역 redis에 저장 후 회원가입시 인증 내역이 있는 경우에만 회원가입 가능함
+    @Operation(summary = "회원가입에서 인증번호 검증", description = "전화번호와 인증번호가 일치하는지 확인합니다.")
+    @PostMapping("/verify/code")
+    public MessageDto verifyCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
+        userService.verifyCode(verifyCodeReqDto);
+        return new MessageDto("인증이 완료되었습니다.");
+    }
 }
