@@ -31,4 +31,8 @@ public class UserController {
 
         return new EmailCheckResDto("사용 가능한 이메일입니다.", isAvailable);
     }
+
+    // 비밀번호 고치기
+
+    // 만약 전화번호 인증이 되면 인증 내역 redis에 저장 후 회원가입시 인증 내역이 있는 경우에만 회원가입 가능함
 }

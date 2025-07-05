@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/register", "/user/email/check", "/auth/login", "/auth/reissue").permitAll()
+                        .requestMatchers("/user/register", "/user/email/check", "/auth/login", "/auth/reissue", "/password/email/check", "/password/receive/code", "/password/verify/code").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)

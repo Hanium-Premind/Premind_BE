@@ -20,3 +20,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+coolsms:
+  apikey: NCSHIPAVTCBAYPAM
+  apisecret: XJWVYUVRBPOW0GW36VCP2MZRW7A9IQZS
+  fromnumber: 01094841183

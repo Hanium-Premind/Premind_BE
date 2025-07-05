@@ -9,6 +9,7 @@ import com.example.Premind_BE.domain.auth.dto.response.ReissueResDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.JwtUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;

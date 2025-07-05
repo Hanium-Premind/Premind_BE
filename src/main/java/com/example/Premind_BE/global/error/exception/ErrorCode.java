@@ -14,8 +14,11 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,  "존재하지 않는 사용자입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
-    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다.")
-
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
+    EMAIL_NOT_EXIST(HttpStatus.NOT_FOUND, "존재하지 않는 이메일입니다."),
+    INVALID_USER_INFORMATION(HttpStatus.BAD_REQUEST, "잘못된 사용자 정보입니다."),
+    VERIFICATION_CODE_SEND_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "인증번호 발송에 실패하였습니다."),
+    INVALID_VERIFICATION_CODE(HttpStatus.UNAUTHORIZED, "인증번호가 일치하지 않습니다.")
     ;
 
 
