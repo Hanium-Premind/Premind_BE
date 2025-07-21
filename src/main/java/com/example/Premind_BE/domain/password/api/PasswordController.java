@@ -50,5 +50,12 @@ public class PasswordController {
         passwordService.updatePassword(updatePasswordReqDto);
         return new MessageDto("새로운 비밀번호가 설정되었습니다.");
     }
+
+    @Operation(summary = "비밀번호 변경을 위한 기존 비밀번호 입력", description = "개인정보 수정 페이지에서 비밀번호 변경을 위한 기존 비밀번호 입력합니다.")
+    @GetMapping("/verify")
+    public MessageDto verifyPassword(@RequestParam String password) {
+        passwordService.verifyPassword(password);
+        return new MessageDto("비밀번호가 일치합니다.");
+    }
 }
 

@@ -10,6 +10,8 @@ import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,4 +50,18 @@ public class PasswordService {
     }
 
 
+    public void verifyPassword(String password) {
+        User user = getCurrentMember();
+        // 입력받은 password가 기존 사용자 비밀번호가 일치한지 확인
+        if(!bCryptPasswordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD); // 비밀번호 불일치
+        }
+    }
+
+    private User getCurrentMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // subject → email
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
 }
