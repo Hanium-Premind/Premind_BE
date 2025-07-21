@@ -18,6 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -72,15 +75,30 @@ public class UserService{
         smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
     }
 
-    public PersonalInfoResDto personalInfo() {
-        User currentMember = getCurrentMember();
-        return new PersonalInfoResDto(currentMember.getName(), currentMember.getBirth().toString(), currentMember.getEmail());
-    }
-
     private User getCurrentMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName(); // subject → email
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
+    public PersonalInfoResDto personalInfo() {
+        User currentMember = getCurrentMember();
+
+        List<String> jobNames = interestJobRepository.findByUser(currentMember)
+                .stream()
+                .map(InterestJob::getJob)
+                .collect(Collectors.toList());
+
+        return PersonalInfoResDto.builder()
+                .email(currentMember.getEmail())
+                .name(currentMember.getName())
+                .birth(currentMember.getBirth().toString())
+                .gender(currentMember.getGender().toString())
+                .phoneNumber(currentMember.getPhoneNumber())
+                .interestJobs(jobNames)
+                .build();
+    }
+
+
 }

@@ -1,9 +1,6 @@
 package com.example.Premind_BE.domain.user.api;
 
-import com.example.Premind_BE.domain.password.dto.request.ReceiveCodeReqDto;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
-import com.example.Premind_BE.domain.password.dto.response.ReceiveCodeResDto;
-import com.example.Premind_BE.domain.password.dto.response.VerifyCodeResDto;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
 import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
@@ -53,7 +50,7 @@ public class UserController {
         return new MessageDto("인증이 완료되었습니다.");
     }
 
-    @Operation(summary = "마이페이지에서 사용자 정보 조회", description = "사용자 개인 정보를 반환합니다.")
+    @Operation(summary = "개인 정보 조회", description = "사용자 정보를 조회합니다.")
     @GetMapping("/personal-info")
     public PersonalInfoResDto personalInfo() {
         return userService.personalInfo();
