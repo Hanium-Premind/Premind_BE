@@ -8,6 +8,7 @@ import com.example.Premind_BE.domain.user.domain.InterestJob;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
 import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
+import com.example.Premind_BE.domain.user.dto.response.PersonalInfoResDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -63,18 +64,23 @@ public class UserService{
         return true; // 사용 가능
     }
 
-    private User getCurrentMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // subject → email
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
     public void receiveCode(UserReceiveCodeReqDto sendCodeRequestDto) {
         smsService.certificateSMS(sendCodeRequestDto.getPhoneNumber());
     }
 
     public void verifyCode(VerifyCodeReqDto verifyCodeReqDto) {
         smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
+    }
+
+    public PersonalInfoResDto personalInfo() {
+        User currentMember = getCurrentMember();
+        return new PersonalInfoResDto(currentMember.getName(), currentMember.getBirth().toString(), currentMember.getEmail());
+    }
+
+    private User getCurrentMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // subject → email
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 }

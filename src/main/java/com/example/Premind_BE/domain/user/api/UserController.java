@@ -8,6 +8,7 @@ import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
 import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.response.EmailCheckResDto;
+import com.example.Premind_BE.domain.user.dto.response.PersonalInfoResDto;
 import com.example.Premind_BE.domain.user.service.UserService;
 import com.example.Premind_BE.global.common.response.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,5 +51,11 @@ public class UserController {
     public MessageDto verifyCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
         userService.verifyCode(verifyCodeReqDto);
         return new MessageDto("인증이 완료되었습니다.");
+    }
+
+    @Operation(summary = "마이페이지에서 사용자 정보 조회", description = "사용자 개인 정보를 반환합니다.")
+    @GetMapping("/personal-info")
+    public PersonalInfoResDto personalInfo() {
+        return userService.personalInfo();
     }
 }
