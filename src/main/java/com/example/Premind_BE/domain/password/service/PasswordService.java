@@ -1,8 +1,7 @@
 package com.example.Premind_BE.domain.password.service;
 
-import com.example.Premind_BE.domain.password.dao.VerificationRecordRepository;
-import com.example.Premind_BE.domain.password.domain.VerificationRecord;
 import com.example.Premind_BE.domain.password.dto.request.ReceiveCodeReqDto;
+import com.example.Premind_BE.domain.password.dto.request.UpdatePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
 import com.example.Premind_BE.domain.password.dto.response.EmailCheckResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
@@ -11,6 +10,7 @@ import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class PasswordService {
     private final UserRepository userRepository;
     private final SmsService smsService;
-    private final VerificationRecordRepository verificationRecordRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public EmailCheckResDto emailCheck(String email) {
         if(userRepository.existsByEmail(email)) return new EmailCheckResDto("존재하는 이메일 정보입니다.");
@@ -36,8 +36,16 @@ public class PasswordService {
 
     public void verifyCode(VerifyCodeReqDto verifyCodeReqDto) {
         smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
-        verificationRecordRepository.save(
-                new VerificationRecord(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode())
-        );
     }
+
+    public void updatePassword(UpdatePasswordReqDto updatePasswordReqDto) {
+        // 이메일로 사용자 정보 찾기
+        User user = userRepository.findByEmail(updatePasswordReqDto.getEmail())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 새로운 비밀번호로 변경
+        user.updatePassword(bCryptPasswordEncoder.encode(updatePasswordReqDto.getNewPassword()));
+    }
+
+
 }

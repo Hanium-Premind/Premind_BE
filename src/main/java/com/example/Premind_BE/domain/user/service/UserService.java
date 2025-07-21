@@ -1,7 +1,5 @@
 package com.example.Premind_BE.domain.user.service;
 
-import com.example.Premind_BE.domain.password.dao.VerificationRecordRepository;
-import com.example.Premind_BE.domain.password.domain.VerificationRecord;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
 import com.example.Premind_BE.domain.password.service.SmsService;
 import com.example.Premind_BE.domain.user.dao.InterestJobRepository;
@@ -19,8 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -29,7 +25,6 @@ public class UserService{
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final InterestJobRepository interestJobRepository;
     private final SmsService smsService;
-    private final VerificationRecordRepository verificationRecordRepository;
 
     public User userRegister(RegisterReqDto registerReqDto) {
         // 이미 존재하는 이메일로 회원가입시 오류 발생
@@ -81,8 +76,5 @@ public class UserService{
 
     public void verifyCode(VerifyCodeReqDto verifyCodeReqDto) {
         smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
-        verificationRecordRepository.save(
-                new VerificationRecord(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode())
-        );
     }
 }

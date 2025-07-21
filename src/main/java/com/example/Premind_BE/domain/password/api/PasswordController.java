@@ -1,5 +1,6 @@
 package com.example.Premind_BE.domain.password.api;
 
+import com.example.Premind_BE.domain.password.dto.request.UpdatePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
 import com.example.Premind_BE.domain.password.dto.response.ReceiveCodeResDto;
 import com.example.Premind_BE.domain.password.dto.request.ReceiveCodeReqDto;
@@ -41,6 +42,13 @@ public class PasswordController {
     public VerifyCodeResDto verifyCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
         passwordService.verifyCode(verifyCodeReqDto);
         return new VerifyCodeResDto("인증이 완료되었습니다.");
+    }
+
+    @Operation(summary = "비밀번호 찾기 새로운 비밀번호 설정", description = "비밀번호 찾기에서 전화번호 인증 완료후 새 비밀번호로 설정할 수 있습니다.")
+    @PutMapping("/update")
+    public MessageDto updatePassword(@RequestBody UpdatePasswordReqDto updatePasswordReqDto) {
+        passwordService.updatePassword(updatePasswordReqDto);
+        return new MessageDto("새로운 비밀번호가 설정되었습니다.");
     }
 }
 

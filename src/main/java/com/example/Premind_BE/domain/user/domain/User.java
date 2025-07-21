@@ -40,5 +40,9 @@ public class User {
     private Gender gender;
 
     @Column(name = "phone_number", length = 11)
-    private String phoneNumber; //01000000000
+    private String phoneNumber; //01000000000\
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }
