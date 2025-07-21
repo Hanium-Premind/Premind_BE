@@ -7,20 +7,25 @@ import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.InterestJob;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
+import com.example.Premind_BE.domain.user.dto.request.UpdatePersonalInfoReqDto;
 import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.response.PersonalInfoResDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -100,5 +105,12 @@ public class UserService{
                 .build();
     }
 
+
+    @Transactional
+    public void updatePersonalInfo(UpdatePersonalInfoReqDto dto) {
+        User user = getCurrentMember();
+        user.updateInfo(dto);
+
+    }
 
 }

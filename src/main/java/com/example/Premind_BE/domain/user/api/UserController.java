@@ -3,6 +3,7 @@ package com.example.Premind_BE.domain.user.api;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
+import com.example.Premind_BE.domain.user.dto.request.UpdatePersonalInfoReqDto;
 import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.response.EmailCheckResDto;
 import com.example.Premind_BE.domain.user.dto.response.PersonalInfoResDto;
@@ -11,6 +12,7 @@ import com.example.Premind_BE.global.common.response.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,5 +56,12 @@ public class UserController {
     @GetMapping("/personal-info")
     public PersonalInfoResDto personalInfo() {
         return userService.personalInfo();
+    }
+
+    @Operation(summary = "개인 정보 수정", description = "개인 정보를 수정하는 API입니다.")
+    @PutMapping("/update/personal-info")
+    public MessageDto updatePersonalInfo(@Valid @RequestBody UpdatePersonalInfoReqDto updatePersonalInfoReqDto) {
+        userService.updatePersonalInfo(updatePersonalInfoReqDto);
+        return new MessageDto("개인 정보가 수정되었습니다.");
     }
 }

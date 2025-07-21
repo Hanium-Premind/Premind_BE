@@ -1,5 +1,6 @@
 package com.example.Premind_BE.domain.user.domain;
 
+import com.example.Premind_BE.domain.user.dto.request.UpdatePersonalInfoReqDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -40,9 +44,18 @@ public class User {
     private Gender gender;
 
     @Column(name = "phone_number", length = 11)
-    private String phoneNumber; //01000000000\
+    private String phoneNumber;
+
+
 
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
+
+    public void updateInfo(UpdatePersonalInfoReqDto dto) {
+        this.name = dto.getName();
+        this.birth = dto.getBirthAsLocalDate();
+        this.gender = dto.getGender();
+    }
+
 }
