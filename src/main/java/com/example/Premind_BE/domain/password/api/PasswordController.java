@@ -1,5 +1,6 @@
 package com.example.Premind_BE.domain.password.api;
 
+import com.example.Premind_BE.domain.password.dto.request.ChangePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.UpdatePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
 import com.example.Premind_BE.domain.password.dto.response.ReceiveCodeResDto;
@@ -7,13 +8,11 @@ import com.example.Premind_BE.domain.password.dto.request.ReceiveCodeReqDto;
 import com.example.Premind_BE.domain.password.dto.response.EmailCheckResDto;
 import com.example.Premind_BE.domain.password.dto.response.VerifyCodeResDto;
 import com.example.Premind_BE.domain.password.service.PasswordService;
-import com.example.Premind_BE.global.common.response.GlobalResponse;
 import com.example.Premind_BE.global.common.response.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -56,6 +55,13 @@ public class PasswordController {
     public MessageDto verifyPassword(@RequestParam String password) {
         passwordService.verifyPassword(password);
         return new MessageDto("비밀번호가 일치합니다.");
+    }
+
+    @Operation(summary = "개인정보 수정페이지에서 비밀번호 변경", description = "기존 비밀번호로 인증 후 새로운 비밀번호를 설정하기 위한 API")
+    @PutMapping("/change")
+    public MessageDto changePassword(@RequestBody ChangePasswordReqDto changePasswordReqDto) {
+        passwordService.changePassword(changePasswordReqDto);
+        return new MessageDto("새로운 비밀번호가 설정되었습니다.");
     }
 }
 

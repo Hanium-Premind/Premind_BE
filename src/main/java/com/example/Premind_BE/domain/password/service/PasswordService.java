@@ -1,5 +1,6 @@
 package com.example.Premind_BE.domain.password.service;
 
+import com.example.Premind_BE.domain.password.dto.request.ChangePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.ReceiveCodeReqDto;
 import com.example.Premind_BE.domain.password.dto.request.UpdatePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
@@ -63,5 +64,11 @@ public class PasswordService {
         String email = authentication.getName(); // subject → email
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public void changePassword(ChangePasswordReqDto changePasswordReqDto) {
+        User user = getCurrentMember();
+        // 새로운 비밀번호로 변경
+        user.updatePassword(bCryptPasswordEncoder.encode(changePasswordReqDto.getNewPassword()));
     }
 }
