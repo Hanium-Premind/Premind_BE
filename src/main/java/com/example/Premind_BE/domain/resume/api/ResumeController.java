@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ResumeController {
     private final ResumeService resumeService;
 
-    @Operation(summary = "비밀번호 찾기에서 인증번호 받기", description = "비밀번호 찾기에서 인증번호 받기")
+    @Operation(summary = "자소서 업로드 API")
     @PostMapping("/upload")
     public ResumeUploadReqDto uploadResume(@RequestBody ResumeUploadReqDto resumeUploadDto) {
         return resumeService.uploadResume(resumeUploadDto);
     }
+
+
 }
