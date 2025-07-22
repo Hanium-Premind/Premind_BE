@@ -14,4 +14,7 @@ public class Section {
 
     @Schema(description = "사용자 답변")
     private String answer;
+
+    @Schema(description = "글자수")
+    private Integer characterCount;
 }

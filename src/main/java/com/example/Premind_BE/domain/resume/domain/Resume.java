@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -51,4 +53,14 @@ public class Resume {
     private String company;
 
     private LocalDateTime createdDate;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "resume", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ResumeSection> sections = new ArrayList<>();
+
+    // 연관관계 편의 메서드
+    public void addSection(ResumeSection section) {
+        this.sections.add(section);
+        section.setResume(this);
+    }
 }

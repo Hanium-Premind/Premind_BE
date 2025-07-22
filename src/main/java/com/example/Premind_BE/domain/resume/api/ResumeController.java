@@ -1,6 +1,7 @@
 package com.example.Premind_BE.domain.resume.api;
 
 import com.example.Premind_BE.domain.resume.dto.request.ResumeUploadReqDto;
+import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
 import com.example.Premind_BE.domain.resume.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/resume")
@@ -22,6 +25,5 @@ public class ResumeController {
     public ResumeUploadReqDto uploadResume(@RequestBody ResumeUploadReqDto resumeUploadDto) {
         return resumeService.uploadResume(resumeUploadDto);
     }
-
 
 }

@@ -8,6 +8,7 @@ import com.example.Premind_BE.domain.resume.domain.Resume;
 import com.example.Premind_BE.domain.resume.domain.ResumeSection;
 import com.example.Premind_BE.domain.resume.dto.request.ResumeUploadReqDto;
 import com.example.Premind_BE.domain.resume.dto.request.Section;
+import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.error.exception.CustomException;
@@ -33,31 +34,37 @@ public class ResumeService {
     public ResumeUploadReqDto uploadResume(ResumeUploadReqDto resumeUploadDto) {
         Resume resume = Resume.builder()
                 .user(getCurrentMember())
-                .jobMajor(jobCategoryRepository.findByLevelAndId(Level.MAJOR, resumeUploadDto.getJobMajorId()))
-                .jobMiddle(jobCategoryRepository.findByLevelAndId(Level.MIDDLE, resumeUploadDto.getJobMiddleId()))
-                .jobMinor(jobCategoryRepository.findByLevelAndId(Level.MINOR, resumeUploadDto.getJobMinorId()))
+                .jobMajor(jobCategoryRepository.findByIdAndLevel(resumeUploadDto.getJobMajorId(), Level.MAJOR)
+                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
+                .jobMiddle(jobCategoryRepository.findByIdAndLevel(resumeUploadDto.getJobMiddleId(), Level.MIDDLE)
+                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
+                .jobMinor(jobCategoryRepository.findByIdAndLevel(resumeUploadDto.getJobMinorId(), Level.MINOR)
+                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
                 .title(resumeUploadDto.getTitle())
                 .memo(resumeUploadDto.getMemo())
                 .company(resumeUploadDto.getCompany())
                 .createdDate(LocalDateTime.now())
                 .build();
-        resumeRepository.save(resume);
 
-        // 질문-답변 리스트 저장
+
+        // 질문-답변 리스트 연관관계 추가
         List<Section> sectionList = resumeUploadDto.getQaList();
         for (int i = 0; i < sectionList.size(); i++) {
             Section section = sectionList.get(i);
             ResumeSection resumeSection = ResumeSection.builder()
-                    .resume(resume)
                     .sequence(i + 1)
                     .question(section.getQuestion())
                     .answer(section.getAnswer())
+                    .characterCount(section.getCharacterCount())
                     .build();
-            resumeSectionRepository.save(resumeSection);
+            resume.addSection(resumeSection); // 연관관계 설정
         }
+
+        resumeRepository.save(resume);
 
         return resumeUploadDto;
     }
+
 
     private User getCurrentMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -65,4 +72,5 @@ public class ResumeService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
 }

@@ -1,16 +1,14 @@
 package com.example.Premind_BE.domain.resume.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Setter
 public class ResumeSection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +25,6 @@ public class ResumeSection {
     private String question;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String answer;
+
+    private Integer characterCount;
 }
