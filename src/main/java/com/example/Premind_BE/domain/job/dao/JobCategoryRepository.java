@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface JobCategoryRepository extends JpaRepository<JobCategory, Long> {
     List<JobCategory> findByLevel(Level level);
+    JobCategory findByLevelAndId(Level level, Long id);
     List<JobCategory> findByLevelAndParentId(Level level, Long parentId);
 }
