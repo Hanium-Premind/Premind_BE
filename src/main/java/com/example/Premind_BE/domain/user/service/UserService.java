@@ -12,6 +12,7 @@ import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.response.PersonalInfoResDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
+import com.example.Premind_BE.global.util.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +35,18 @@ public class UserService{
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final InterestJobRepository interestJobRepository;
     private final SmsService smsService;
+    private final RedisUtil redisUtil;
 
     public User userRegister(RegisterReqDto registerReqDto) {
-        // 이미 존재하는 이메일로 회원가입시 오류 발생
+        String phoneNumber = registerReqDto.getPhoneNumber();
+
+        //  전화번호 인증 여부 확인
+        String isVerified = redisUtil.get("verify:" + phoneNumber);
+        if (!"true".equals(isVerified)) {
+            throw new CustomException(ErrorCode.PHONE_NOT_VERIFIED);
+        }
+
+        // 이미 존재하는 이메일 체크
         emailCheck(registerReqDto.getEmail());
 
         // 사용자 저장
@@ -47,10 +57,11 @@ public class UserService{
                         .name(registerReqDto.getName())
                         .birth(registerReqDto.getBirthAsLocalDate())
                         .gender(registerReqDto.getGender())
-                        .phoneNumber(registerReqDto.getPhoneNumber())
+                        .phoneNumber(phoneNumber)
                         .build()
         );
 
+        // 관심 직무 저장
         interestJobRepository.saveAll(registerReqDto.getInterestJobs().stream()
                 .map(job -> InterestJob.builder()
                         .user(savedUser)
@@ -61,6 +72,7 @@ public class UserService{
 
         return savedUser;
     }
+
 
 
 

@@ -11,8 +11,10 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +54,7 @@ public class SmsService {
         Message coolsms = new Message(apiKey, apiSecret);
         String code = createRandomNumber();
 
-        // Redis에 5분 유효시간으로 저장
-        redisUtil.set(phoneNumber, code, 3);
+        redisUtil.set(phoneNumber, code, 3, TimeUnit.MINUTES);;
 
         // 문자 발송
         try {
@@ -67,10 +68,17 @@ public class SmsService {
     // 인증번호 검증용 메서드
     public boolean verifyCode(String phoneNumber, String inputCode) {
         String savedCode = redisUtil.get(phoneNumber);
-        if (savedCode == null || !savedCode.equals(inputCode)) {
-            throw new CustomException(ErrorCode.INVALID_VERIFICATION_CODE);  // 인증번호 불일치 오류 발생
+
+        if (savedCode == null) {
+            throw new CustomException(ErrorCode.NOT_EXIST_VERIFICATION_RECORD);
+        } else if (!savedCode.equals(inputCode)) {
+            throw new CustomException(ErrorCode.INVALID_VERIFICATION_CODE);
         }
-        return true;  // 인증번호 일치하면 true 반환
+
+        redisUtil.set("verify:" + phoneNumber, "true", Duration.ofMinutes(15));
+
+        return true;
     }
+
 
 }

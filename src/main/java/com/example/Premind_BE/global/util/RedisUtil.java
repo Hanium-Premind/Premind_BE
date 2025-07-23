@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -12,10 +13,14 @@ public class RedisUtil {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    // 저장
-    public void set(String key, String value, long minutes) {
-        redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(minutes));
+    public void set(String key, String value, Duration ttl) {
+        redisTemplate.opsForValue().set(key, value, ttl);
     }
+
+    public void set(String key, String value, long timeout, TimeUnit unit) {
+        redisTemplate.opsForValue().set(key, value, timeout, unit);
+    }
+
 
     // 조회
     public String get(String key) {

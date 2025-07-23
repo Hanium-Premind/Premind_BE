@@ -47,7 +47,7 @@ public class UserController {
 
     @Operation(summary = "회원가입에서 인증번호 검증", description = "전화번호와 인증번호가 일치하는지 확인합니다.")
     @PostMapping("/verify/code")
-    public MessageDto verifyCode(@RequestBody VerifyCodeReqDto verifyCodeReqDto) {
+    public MessageDto verifyCode(@Valid @RequestBody VerifyCodeReqDto verifyCodeReqDto) {
         userService.verifyCode(verifyCodeReqDto);
         return new MessageDto("인증이 완료되었습니다.");
     }
