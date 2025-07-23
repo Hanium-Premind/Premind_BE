@@ -25,5 +25,4 @@ public class ResumeController {
     public ResumeUploadReqDto uploadResume(@RequestBody ResumeUploadReqDto resumeUploadDto) {
         return resumeService.uploadResume(resumeUploadDto);
     }
-
 }

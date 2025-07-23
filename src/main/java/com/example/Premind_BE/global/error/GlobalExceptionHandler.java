@@ -1,10 +1,12 @@
 package com.example.Premind_BE.global.error;
 
 import com.example.Premind_BE.global.common.response.GlobalResponse;
+import com.example.Premind_BE.global.common.response.MessageDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -22,4 +24,5 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 GlobalResponse.failure(errorCode.getStatus().value(), errorResponse);
         return ResponseEntity.status(errorCode.getStatus()).body(response);
     }
+
 }

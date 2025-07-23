@@ -40,7 +40,7 @@ public class UserController {
 
     @Operation(summary = "회원가입에서 인증번호 받기", description = "회원가입에서 인증번호 받기")
     @PostMapping("/receive/code")
-    public MessageDto receiveCode(@RequestBody UserReceiveCodeReqDto sendCodeRequestDto) {
+    public MessageDto receiveCode(@Valid @RequestBody UserReceiveCodeReqDto sendCodeRequestDto) {
         userService.receiveCode(sendCodeRequestDto);
         return new MessageDto("인증번호가 발송되었습니다.");
     }
