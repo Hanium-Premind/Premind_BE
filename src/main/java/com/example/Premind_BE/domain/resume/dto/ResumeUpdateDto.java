@@ -1,5 +1,7 @@
-package com.example.Premind_BE.domain.resume.dto.request;
+package com.example.Premind_BE.domain.resume.dto;
 
+import com.example.Premind_BE.domain.resume.dto.request.Section;
+import com.example.Premind_BE.domain.resume.dto.request.UpdateSection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,8 +12,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(description = "자소서 업로드를 위한 요청 DTO")
-public class ResumeUploadReqDto {
+@Schema(description = "자소서 수정을 위한 요청 DTO")
+public class ResumeUpdateDto {
     @Schema(description = "선택한 직무의 대분류 ID값")
     private Long jobMajorId;
     @Schema(description = "선택한 직무의 중분류 ID값")
@@ -25,5 +27,5 @@ public class ResumeUploadReqDto {
     @Schema(description = "자소서 지원 기업명")
     private String company;
     @Schema(description = "자소서 질문-답변 항목 리스트")
-    private List<Section> qaList;
+    private List<UpdateSection> qaList;
 }

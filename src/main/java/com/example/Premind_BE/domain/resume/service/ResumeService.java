@@ -1,12 +1,14 @@
 package com.example.Premind_BE.domain.resume.service;
 
 import com.example.Premind_BE.domain.job.dao.JobCategoryRepository;
+import com.example.Premind_BE.domain.job.domain.JobCategory;
 import com.example.Premind_BE.domain.job.domain.Level;
 import com.example.Premind_BE.domain.resume.dao.ResumeRepository;
 import com.example.Premind_BE.domain.resume.dao.ResumeSectionRepository;
 import com.example.Premind_BE.domain.resume.domain.Resume;
 import com.example.Premind_BE.domain.resume.domain.ResumeSection;
-import com.example.Premind_BE.domain.resume.dto.request.ResumeUploadReqDto;
+import com.example.Premind_BE.domain.resume.dto.ResumeUpdateDto;
+import com.example.Premind_BE.domain.resume.dto.ResumeUploadDto;
 import com.example.Premind_BE.domain.resume.dto.request.Section;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeInquiryResDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
@@ -33,7 +35,7 @@ public class ResumeService {
     private final JobCategoryRepository jobCategoryRepository;
     private final ResumeSectionRepository resumeSectionRepository;
 
-    public ResumeUploadReqDto uploadResume(ResumeUploadReqDto resumeUploadDto) {
+    public ResumeUploadDto uploadResume(ResumeUploadDto resumeUploadDto) {
         Resume resume = Resume.builder()
                 .user(getCurrentMember())
                 .jobMajor(jobCategoryRepository.findByIdAndLevel(resumeUploadDto.getJobMajorId(), Level.MAJOR)
@@ -80,23 +82,44 @@ public class ResumeService {
 
     public ResumeInquiryResDto resumeInquiry(Long resumeId) {
         // 조회하고자하는 자소서의 작성자가 아니라면
-        Resume resume = resumeRepository.findByIdAndUser(resumeId, getCurrentMember())
-                .orElseThrow(() -> new CustomException(ErrorCode.RESUME_ACCESS_DENIED));
+        Resume resume = findResume(resumeId);
+        verifyUser(resume); // 사용자 검증
 
         return resumeRepository.findResumeInquiry(resumeId);
     }
 
+    public void updateResume(Long resumeId, ResumeUpdateDto dto) {
+        Resume resume = findResume(resumeId);
+        verifyUser(resume); // 사용자 검증
+
+        JobCategory major = jobCategoryRepository.findById(dto.getJobMajorId())
+                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
+        JobCategory middle = jobCategoryRepository.findById(dto.getJobMiddleId())
+                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
+        JobCategory minor = jobCategoryRepository.findById(dto.getJobMinorId())
+                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
+
+        resume.update(major, middle, minor, dto);
+    }
+
     public MessageDto deleteResume(Long resumeId) {
-        Resume resume = resumeRepository.findById(resumeId)
-                .orElseThrow(() -> new CustomException(ErrorCode.RESUME_NOT_EXIST));
+        Resume resume = findResume(resumeId);
 
         // 로그인 유저의 이력서인지 확인
-        if (!resume.getUser().equals(getCurrentMember())) {
-            throw new CustomException(ErrorCode.RESUME_ACCESS_DENIED);
-        }
+        verifyUser(resume);
 
         resumeRepository.delete(resume);
         return new MessageDto(resumeId + "번 자기소개서가 삭제되었습니다.");
     }
 
+    private void verifyUser(Resume resume) {
+        if (!resume.getUser().equals(getCurrentMember())) {
+            throw new CustomException(ErrorCode.RESUME_ACCESS_DENIED);
+        }
+    }
+
+    private Resume findResume(Long resumeId) {
+        return resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESUME_NOT_EXIST));
+    }
 }

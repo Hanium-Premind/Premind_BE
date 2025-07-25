@@ -1,7 +1,8 @@
 package com.example.Premind_BE.domain.resume.api;
 
+import com.example.Premind_BE.domain.resume.dto.ResumeUpdateDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeInquiryResDto;
-import com.example.Premind_BE.domain.resume.dto.request.ResumeUploadReqDto;
+import com.example.Premind_BE.domain.resume.dto.ResumeUploadDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
 import com.example.Premind_BE.domain.resume.service.ResumeService;
 import com.example.Premind_BE.global.common.response.MessageDto;
@@ -23,7 +24,7 @@ public class ResumeController {
 
     @Operation(summary = "자소서 업로드 API")
     @PostMapping("/upload")
-    public ResumeUploadReqDto uploadResume(@RequestBody ResumeUploadReqDto resumeUploadDto) {
+    public ResumeUploadDto uploadResume(@RequestBody ResumeUploadDto resumeUploadDto) {
         return resumeService.uploadResume(resumeUploadDto);
     }
 
@@ -38,6 +39,14 @@ public class ResumeController {
     @GetMapping("/{resumeId}")
     public ResumeInquiryResDto resumeInquiry(@PathVariable Long resumeId) {
         return resumeService.resumeInquiry(resumeId);
+    }
+
+    @Operation(summary = "자소서 수정 API")
+    @Parameter(name = "resumeId", in = ParameterIn.PATH, description = "수정하고자 하는 자소서 id값", required = true)
+    @PutMapping("/{resumeId}")
+    public MessageDto updateResume(@PathVariable Long resumeId, @RequestBody ResumeUpdateDto resumeUpdateDto) {
+        resumeService.updateResume(resumeId, resumeUpdateDto);
+        return new MessageDto(resumeId + "번 자소서가 수정되었습니다.");
     }
 
     @Operation(summary = "자소서 삭제 API")

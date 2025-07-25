@@ -1,6 +1,8 @@
 package com.example.Premind_BE.domain.resume.domain;
 
 import com.example.Premind_BE.domain.job.domain.JobCategory;
+import com.example.Premind_BE.domain.resume.dto.ResumeUpdateDto;
+import com.example.Premind_BE.domain.resume.dto.request.UpdateSection;
 import com.example.Premind_BE.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -62,5 +64,30 @@ public class Resume {
     public void addSection(ResumeSection section) {
         this.sections.add(section);
         section.setResume(this);
+    }
+
+
+    public void update(JobCategory major, JobCategory middle, JobCategory minor, ResumeUpdateDto dto) {
+        this.jobMajor = major;
+        this.jobMiddle = middle;
+        this.jobMinor = minor;
+        this.title = dto.getTitle();
+        this.memo = dto.getMemo();
+        this.company = dto.getCompany();
+
+        // 기존 qa리스트 삭제 후 새로운 qa리스트로 업데이트
+        this.sections.clear();
+
+        int sq = 1;
+        for (UpdateSection sec : dto.getQaList()) {
+            ResumeSection section = ResumeSection.builder()
+                    .resume(this)
+                    .sequence(sq++)
+                    .question(sec.getQuestion())
+                    .answer(sec.getAnswer())
+                    .characterCount(sec.getCharacterCount())
+                    .build();
+            this.addSection(section);
+        }
     }
 }
