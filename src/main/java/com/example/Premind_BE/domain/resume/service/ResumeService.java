@@ -12,6 +12,7 @@ import com.example.Premind_BE.domain.resume.dto.response.ResumeInquiryResDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
+import com.example.Premind_BE.global.common.response.MessageDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import jakarta.transaction.Transactional;
@@ -22,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -85,4 +85,18 @@ public class ResumeService {
 
         return resumeRepository.findResumeInquiry(resumeId);
     }
+
+    public MessageDto deleteResume(Long resumeId) {
+        Resume resume = resumeRepository.findById(resumeId)
+                .orElseThrow(() -> new CustomException(ErrorCode.RESUME_NOT_EXIST));
+
+        // 로그인 유저의 이력서인지 확인
+        if (!resume.getUser().equals(getCurrentMember())) {
+            throw new CustomException(ErrorCode.RESUME_ACCESS_DENIED);
+        }
+
+        resumeRepository.delete(resume);
+        return new MessageDto(resumeId + "번 자기소개서가 삭제되었습니다.");
+    }
+
 }
