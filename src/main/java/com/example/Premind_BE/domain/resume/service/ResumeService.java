@@ -65,7 +65,6 @@ public class ResumeService {
         return resumeUploadDto;
     }
 
-
     private User getCurrentMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName(); // subject → email
@@ -73,5 +72,7 @@ public class ResumeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
-
+    public List<ResumeListResDto> resumeList() {
+        return resumeRepository.findAllResumeListWithJobMinor(getCurrentMember());
+    }
 }

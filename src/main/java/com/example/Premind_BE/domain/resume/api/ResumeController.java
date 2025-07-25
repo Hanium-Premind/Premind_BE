@@ -6,10 +6,7 @@ import com.example.Premind_BE.domain.resume.service.ResumeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,5 +21,11 @@ public class ResumeController {
     @PostMapping("/upload")
     public ResumeUploadReqDto uploadResume(@RequestBody ResumeUploadReqDto resumeUploadDto) {
         return resumeService.uploadResume(resumeUploadDto);
+    }
+
+    @Operation(summary = "자소서 목록 조회 API")
+    @GetMapping("/list")
+    public List<ResumeListResDto> resumeList() {
+        return resumeService.resumeList();
     }
 }

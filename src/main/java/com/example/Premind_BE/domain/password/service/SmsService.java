@@ -5,8 +5,10 @@ import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.RedisUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.nurigo.java_sdk.api.Message;
 import net.nurigo.java_sdk.exceptions.CoolsmsException;
+import org.apache.juli.logging.Log;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SmsService {
     private final RedisUtil redisUtil;
 
@@ -61,6 +64,7 @@ public class SmsService {
             JSONObject obj = (JSONObject) coolsms.send(makeParams(phoneNumber, code));
             System.out.println("인증번호 발송 성공: " + obj.toJSONString());
         } catch (CoolsmsException e) {
+            log.error("Coolsms 전송 실패: {}", e.getMessage());  // 로그에 메시지 남기기
             throw new CustomException(ErrorCode.VERIFICATION_CODE_SEND_FAILED);
         }
     }

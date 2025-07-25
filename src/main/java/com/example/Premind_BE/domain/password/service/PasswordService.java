@@ -42,13 +42,26 @@ public class PasswordService {
     }
 
     public void verifyCode(VerifyCodeReqDto verifyCodeReqDto) {
-        smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
+        String phoneNumber = verifyCodeReqDto.getPhoneNumber();
+        String code = verifyCodeReqDto.getCode();
+
+        // 인증번호 검증 (예외 발생 시 중단)
+        smsService.verifyCode(phoneNumber, code);
+
+        // 인증 성공 시 Redis에 인증 완료 내역 저장
+        redisUtil.set("verify:" + phoneNumber, "true", Duration.ofMinutes(10));
     }
+
 
     public void updatePassword(UpdatePasswordReqDto updatePasswordReqDto) {
         // 이메일로 사용자 정보 찾기
         User user = userRepository.findByEmail(updatePasswordReqDto.getEmail())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        String isVerified = redisUtil.get("verify:" + user.getPhoneNumber());
+        if (!"true".equals(isVerified)) {
+            throw new CustomException(ErrorCode.PHONE_NOT_VERIFIED);
+        }
 
         // 새로운 비밀번호로 변경
         user.updatePassword(bCryptPasswordEncoder.encode(updatePasswordReqDto.getNewPassword()));

@@ -12,6 +12,7 @@ import com.example.Premind_BE.global.common.response.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class PasswordController {
 
     @Operation(summary = "비밀번호 찾기에서 인증번호 받기", description = "비밀번호 찾기에서 인증번호 받기")
     @PostMapping("/receive/code")
-    public ReceiveCodeResDto receiveCode(@RequestBody ReceiveCodeReqDto sendCodeRequestDto) {
+    public ReceiveCodeResDto receiveCode(@Valid @RequestBody ReceiveCodeReqDto sendCodeRequestDto) {
         passwordService.receiveCode(sendCodeRequestDto);
         return new ReceiveCodeResDto("인증번호가 발송되었습니다.");
     }
