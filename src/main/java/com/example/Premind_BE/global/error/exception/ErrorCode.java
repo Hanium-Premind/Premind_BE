@@ -22,8 +22,8 @@ public enum ErrorCode {
     JOB_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 직무 유형입니다."),
     NOT_EXIST_VERIFICATION_RECORD(HttpStatus.NOT_FOUND, "인증내역이 존재하지 않습니다."),
     PHONE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "인증내역이 존재하지 않습니다."),
-    PASSWORD_REAUTH_REQUIRED(HttpStatus.BAD_REQUEST, "기존 비밀번호 인증내역이 존재하지 않습니다." );
-
+    PASSWORD_REAUTH_REQUIRED(HttpStatus.BAD_REQUEST, "기존 비밀번호 인증내역이 존재하지 않습니다." ),
+    RESUME_ACCESS_DENIED(HttpStatus.FORBIDDEN, "자소서에 대한 접근 권한이 없습니다.");
 
 
     private final HttpStatus status;

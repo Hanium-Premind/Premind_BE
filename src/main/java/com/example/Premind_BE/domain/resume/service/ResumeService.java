@@ -8,6 +8,7 @@ import com.example.Premind_BE.domain.resume.domain.Resume;
 import com.example.Premind_BE.domain.resume.domain.ResumeSection;
 import com.example.Premind_BE.domain.resume.dto.request.ResumeUploadReqDto;
 import com.example.Premind_BE.domain.resume.dto.request.Section;
+import com.example.Premind_BE.domain.resume.dto.response.ResumeInquiryResDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -74,5 +76,13 @@ public class ResumeService {
 
     public List<ResumeListResDto> resumeList() {
         return resumeRepository.findAllResumeListWithJobMinor(getCurrentMember());
+    }
+
+    public ResumeInquiryResDto resumeInquiry(Long resumeId) {
+        // 조회하고자하는 자소서의 작성자가 아니라면
+        Resume resume = resumeRepository.findByIdAndUser(resumeId, getCurrentMember())
+                .orElseThrow(() -> new CustomException(ErrorCode.RESUME_ACCESS_DENIED));
+
+        return resumeRepository.findResumeInquiry(resumeId);
     }
 }
