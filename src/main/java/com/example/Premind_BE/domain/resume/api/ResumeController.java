@@ -11,6 +11,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,8 +26,9 @@ public class ResumeController {
 
     @Operation(summary = "자소서 업로드 API")
     @PostMapping("/upload")
-    public ResumeUploadDto uploadResume(@RequestBody ResumeUploadDto resumeUploadDto) {
-        return resumeService.uploadResume(resumeUploadDto);
+    public ResponseEntity<Void> uploadResume(@RequestBody ResumeUploadDto resumeUploadDto) {
+        resumeService.uploadResume(resumeUploadDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(summary = "자소서 목록 조회 API")
