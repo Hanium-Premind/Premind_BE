@@ -2,11 +2,14 @@ package com.example.Premind_BE.domain.portfolio.service;
 
 import com.example.Premind_BE.domain.job.dao.JobCategoryRepository;
 import com.example.Premind_BE.domain.job.domain.Level;
+import com.example.Premind_BE.domain.portfolio.dao.PortfolioQuestionRepository;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioRepository;
 import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
 import com.example.Premind_BE.domain.portfolio.domain.PortfolioSection;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioSectionReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
+import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioQuestionResDto;
+import com.example.Premind_BE.domain.resume.api.ResumeQuestionResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.error.exception.CustomException;
@@ -28,6 +31,7 @@ public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
     private final UserRepository userRepository;
     private final JobCategoryRepository jobCategoryRepository;
+    private final PortfolioQuestionRepository portfolioQuestionRepository;
 
     public void uploadPortfolio(PortfolioUploadReqDto reqDto, MultipartFile file) {
         // Portfolio 객체 생성
@@ -67,5 +71,12 @@ public class PortfolioService {
         String email = authentication.getName(); // subject → email
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    public List<PortfolioQuestionResDto> portfolioQuestionList() {
+        return portfolioQuestionRepository.findAll()
+                .stream()
+                .map(PortfolioQuestionResDto::from)
+                .toList();
     }
 }

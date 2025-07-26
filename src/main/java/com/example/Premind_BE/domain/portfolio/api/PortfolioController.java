@@ -1,6 +1,7 @@
 package com.example.Premind_BE.domain.portfolio.api;
 
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
+import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioQuestionResDto;
 import com.example.Premind_BE.domain.portfolio.service.PortfolioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/portfolio")
@@ -49,4 +52,9 @@ public class PortfolioController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "포트폴리오 질문 항목 조회 API")
+    @GetMapping("/question/list")
+    public List<PortfolioQuestionResDto> portfolioQuestionList() {
+        return portfolioService.portfolioQuestionList();
+    }
 }
