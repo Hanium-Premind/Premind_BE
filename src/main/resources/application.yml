@@ -20,6 +20,10 @@ spring:
     redis:
       host: localhost
       port: 6379
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 25MB
 coolsms:
   apikey: NCSHIPAVTCBAYPAM
   apisecret: XJWVYUVRBPOW0GW36VCP2MZRW7A9IQZS

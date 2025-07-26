@@ -1,6 +1,5 @@
 package com.example.Premind_BE.domain.resume.dto;
 
-import com.example.Premind_BE.domain.resume.dto.request.Section;
 import com.example.Premind_BE.domain.resume.dto.request.UpdateSection;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

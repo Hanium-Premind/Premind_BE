@@ -6,12 +6,11 @@ import com.example.Premind_BE.domain.job.domain.Level;
 import com.example.Premind_BE.domain.resume.api.ResumeQuestionResDto;
 import com.example.Premind_BE.domain.resume.dao.ResumeQuestionRepository;
 import com.example.Premind_BE.domain.resume.dao.ResumeRepository;
-import com.example.Premind_BE.domain.resume.dao.ResumeSectionRepository;
 import com.example.Premind_BE.domain.resume.domain.Resume;
 import com.example.Premind_BE.domain.resume.domain.ResumeSection;
 import com.example.Premind_BE.domain.resume.dto.ResumeUpdateDto;
 import com.example.Premind_BE.domain.resume.dto.ResumeUploadDto;
-import com.example.Premind_BE.domain.resume.dto.request.Section;
+import com.example.Premind_BE.domain.resume.dto.request.ResumeSectionReqDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeInquiryResDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
@@ -54,9 +53,9 @@ public class ResumeService {
 
 
         // 질문-답변 리스트 연관관계 추가
-        List<Section> sectionList = resumeUploadDto.getQaList();
+        List<ResumeSectionReqDto> sectionList = resumeUploadDto.getQaList();
         for (int i = 0; i < sectionList.size(); i++) {
-            Section section = sectionList.get(i);
+            ResumeSectionReqDto section = sectionList.get(i);
             ResumeSection resumeSection = ResumeSection.builder()
                     .sequence(i + 1)
                     .question(section.getQuestion())

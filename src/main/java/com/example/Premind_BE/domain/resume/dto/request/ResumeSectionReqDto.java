@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "자기소개서 문항")
-public class Section {
+public class ResumeSectionReqDto {
 
     @Schema(description = "자기소개서 질문 항목")
     private String question;
