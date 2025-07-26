@@ -58,4 +58,10 @@ public class ResumeController {
     public MessageDto deleteResume(@PathVariable Long resumeId) {
         return resumeService.deleteResume(resumeId);
     }
+
+    @Operation(summary = "자소서 질문 항목 조회 API")
+    @GetMapping("/question/list")
+    public List<ResumeQuestionResDto> resumeQuestionList() {
+        return resumeService.resumeQuestionList();
+    }
 }

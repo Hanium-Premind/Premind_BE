@@ -3,6 +3,8 @@ package com.example.Premind_BE.domain.resume.service;
 import com.example.Premind_BE.domain.job.dao.JobCategoryRepository;
 import com.example.Premind_BE.domain.job.domain.JobCategory;
 import com.example.Premind_BE.domain.job.domain.Level;
+import com.example.Premind_BE.domain.resume.api.ResumeQuestionResDto;
+import com.example.Premind_BE.domain.resume.dao.ResumeQuestionRepository;
 import com.example.Premind_BE.domain.resume.dao.ResumeRepository;
 import com.example.Premind_BE.domain.resume.dao.ResumeSectionRepository;
 import com.example.Premind_BE.domain.resume.domain.Resume;
@@ -33,7 +35,7 @@ public class ResumeService {
     private final ResumeRepository resumeRepository;
     private final UserRepository userRepository;
     private final JobCategoryRepository jobCategoryRepository;
-    private final ResumeSectionRepository resumeSectionRepository;
+    private final ResumeQuestionRepository resumeQuestionRepository;
 
     public ResumeUploadDto uploadResume(ResumeUploadDto resumeUploadDto) {
         Resume resume = Resume.builder()
@@ -121,5 +123,12 @@ public class ResumeService {
     private Resume findResume(Long resumeId) {
         return resumeRepository.findById(resumeId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESUME_NOT_EXIST));
+    }
+
+    public List<ResumeQuestionResDto> resumeQuestionList() {
+        return resumeQuestionRepository.findAll()
+                .stream()
+                .map(ResumeQuestionResDto::from)
+                .toList();
     }
 }
