@@ -57,9 +57,11 @@ jobs:
           script: |
             docker stop premind_be || true
             docker rm premind_be || true
+            aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 896823725236.dkr.ecr.ap-northeast-2.amazonaws.com
             docker pull 896823725236.dkr.ecr.ap-northeast-2.amazonaws.com/premind_be:latest
             docker run -d \
               --name premind_be \
               -e SPRING_PROFILES_ACTIVE=prod \
               -p 8080:8080 \
               896823725236.dkr.ecr.ap-northeast-2.amazonaws.com/premind_be:latest
+      
