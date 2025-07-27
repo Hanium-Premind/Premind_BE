@@ -42,7 +42,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Docker 이미지 생성
-        run: docker build -f Dockerfile-prod -t premind-be .git
+        run: docker build -f Dockerfile-prod -t premind-be .
 
       - name: Docker 이미지에 Tag 붙이기
         run: docker tag premind-be 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
