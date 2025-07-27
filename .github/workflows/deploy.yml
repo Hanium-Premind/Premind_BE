@@ -3,7 +3,7 @@ name: Deploy To EC2
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   deploy:
@@ -18,8 +18,12 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: application.yml 파일 만들기
-        run: echo "${{ secrets.APPLICATION_PROPERTIES }}" > ./src/main/resources/application.yml
+      - name: application.yml 파일 만들기 (멀티라인 대응)
+        run: |
+          cat <<EOF > ./src/main/resources/application.yml
+          ${{ secrets.APPLICATION_PROPERTIES }}
+          EOF
+
       - name: gradlew에 실행 권한 부여
         run: chmod +x ./gradlew
 
@@ -29,7 +33,7 @@ jobs:
       - name: AWS Resource에 접근할 수 있게 AWS credentials 설정
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ap-northeast-2
+          aws-region: ap-southeast-2  # ✅ ECR 리전에 맞춤
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -38,15 +42,15 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Docker 이미지 생성
-        run: docker build -t premind_be .
+        run: docker build -t premind-be .
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag premind_be 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
+        run: docker tag premind-be 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
 
       - name: ECR에 Docker 이미지 Push하기
         run: docker push 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
 
-      - name: SSH로 EC2에 접속하기
+      - name: SSH로 EC2에 접속하여 Docker 컨테이너 배포
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -56,5 +60,10 @@ jobs:
           script: |
             docker stop premind_be || true
             docker rm premind_be || true
+            aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com
             docker pull 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
-            docker run -d --name server_practice -p 8080:8080 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
+            docker run -d \
+              --name premind_be \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              -p 8080:8080 \
+              896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest

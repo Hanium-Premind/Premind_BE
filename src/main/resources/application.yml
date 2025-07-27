@@ -1,4 +1,7 @@
+# ✅ local 환경 (기본)
 spring:
+  profiles:
+    default: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/premind?useSSL=false
@@ -12,10 +15,9 @@ spring:
       ddl-auto: update
     show_sql: true
   jwt:
-  # 32글자 이상 인코딩된 문자열: premindserversecretaccesstokenpremindserversecretaccesstokenpremindserversecretaccesstoken
     secret: cHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2Vu
-    access-expiration: 180 # minutes
-    refresh-expiration: 43200 # 30 days
+    access-expiration: 180
+    refresh-expiration: 43200
   data:
     redis:
       host: localhost
@@ -24,6 +26,43 @@ spring:
     multipart:
       max-file-size: 20MB
       max-request-size: 25MB
+
+coolsms:
+  apikey: NCSHIPAVTCBAYPAM
+  apisecret: XJWVYUVRBPOW0GW36VCP2MZRW7A9IQZS
+  fromnumber: 01094841183
+
+logging:
+  level:
+    org.springframework.cache: trace
+
+---
+
+# ✅ prod 환경
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://premind-be-db.cdw04s8ey5lo.ap-southeast-2.rds.amazonaws.com:3306/premind?useSSL=false
+    username: admin
+    password: premind2025A
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+  jwt:
+    secret: cHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2VucHJlbWluZHNlcnZlcnNlY3JldGFjY2Vzc3Rva2Vu
+    access-expiration: 180          # 분 단위
+    refresh-expiration: 43200       # 분 단위 (30일)
+
 coolsms:
   apikey: NCSHIPAVTCBAYPAM
   apisecret: XJWVYUVRBPOW0GW36VCP2MZRW7A9IQZS
