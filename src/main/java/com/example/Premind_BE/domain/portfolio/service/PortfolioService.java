@@ -1,29 +1,40 @@
 package com.example.Premind_BE.domain.portfolio.service;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.Headers;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.Premind_BE.domain.job.dao.JobCategoryRepository;
 import com.example.Premind_BE.domain.job.domain.Level;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioQuestionRepository;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioRepository;
 import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
 import com.example.Premind_BE.domain.portfolio.domain.PortfolioSection;
+import com.example.Premind_BE.domain.portfolio.dto.response.PresignedUrlResDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioSectionReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioQuestionResDto;
-import com.example.Premind_BE.domain.resume.api.ResumeQuestionResDto;
+import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioUploadResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
+import com.example.Premind_BE.infra.s3.S3Properties;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,9 +43,26 @@ public class PortfolioService {
     private final UserRepository userRepository;
     private final JobCategoryRepository jobCategoryRepository;
     private final PortfolioQuestionRepository portfolioQuestionRepository;
+    private final FileService fileService;
+    private final S3Properties s3Properties;
+    private final AmazonS3 amazonS3;
 
-    public void uploadPortfolio(PortfolioUploadReqDto reqDto, MultipartFile file) {
-        // Portfolio 객체 생성
+    public PresignedUrlResDto generatePresignedUrl() {
+        Long memberId = getCurrentMember().getId();
+        String fileKey = fileService.generateUUID();
+        String fileName = fileService.createFileName(memberId, fileKey);
+
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                fileService.createGeneratePresignedUrlRequest(s3Properties.getBucket(), fileName);
+
+        String presignedUrl = amazonS3.generatePresignedUrl(generatePresignedUrlRequest).toString();
+        return new PresignedUrlResDto(presignedUrl, fileKey);
+    }
+
+
+
+    public PortfolioUploadResDto uploadPortfolio(PortfolioUploadReqDto reqDto) {
+
         Portfolio portfolio = Portfolio.builder()
                 .user(getCurrentMember())
                 .jobMajor(jobCategoryRepository.findByIdAndLevel(reqDto.getJobMajorId(), Level.MAJOR)
@@ -45,10 +73,12 @@ public class PortfolioService {
                         .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
                 .title(reqDto.getTitle())
                 .company(reqDto.getCompany())
+                .filePath(reqDto.getFileUrl())
                 .createdDate(LocalDateTime.now())
                 .build();
 
-        // 질문-답변 리스트 연관관계 추가
+        log.info("Portfolio created with title: {}", portfolio.getTitle());
+
         List<PortfolioSectionReqDto> sectionList = reqDto.getQaList();
         for (int i = 0; i < sectionList.size(); i++) {
             PortfolioSectionReqDto section = sectionList.get(i);
@@ -60,10 +90,9 @@ public class PortfolioService {
             portfolio.addSection(resumeSection);
         }
 
-        // 파일 업로드 로직
-
-
         portfolioRepository.save(portfolio);
+
+        return new PortfolioUploadResDto(portfolio.getId());
     }
 
     private User getCurrentMember() {

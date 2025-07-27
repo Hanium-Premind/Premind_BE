@@ -1,6 +1,5 @@
 package com.example.Premind_BE.domain.portfolio.dto.request;
 
-import com.example.Premind_BE.domain.resume.dto.request.ResumeSectionReqDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,4 +24,7 @@ public class PortfolioUploadReqDto {
     private String company;
     @Schema(description = "포트폴리오 질문-답변 항목 리스트")
     private List<PortfolioSectionReqDto> qaList;
+    @Schema(description = "업로드된 S3 파일 경로, presignedUrl.split('?')[0] 값이다.")
+    private String fileUrl;
+
 }
