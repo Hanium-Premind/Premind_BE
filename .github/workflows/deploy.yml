@@ -55,7 +55,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            docker stop premind_be ||a true
+            docker stop premind_be || true
             docker rm premind_be || true
             docker pull 896823725236.dkr.ecr.ap-northeast-2.amazonaws.com/premind_be:latest
             docker run -d \
