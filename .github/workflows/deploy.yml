@@ -42,10 +42,10 @@ jobs:
         run: docker build -t premind_be .
 
       - name: Docker 이미지에 Tag 붙이기
-        run: docker tag premind_be 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
+        run: docker tag premind_be 896823725236.dkr.ecr.ap-northeast-2.amazonaws.com/premind_be:latest
 
       - name: ECR에 Docker 이미지 Push하기
-        run: docker push 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
+        run: docker push 896823725236.dkr.ecr.ap-northeast-2.amazonaws.com/premind_be:latest
 
       - name: SSH로 EC2에 접속하기
         uses: appleboy/ssh-action@v1.0.3
@@ -57,9 +57,9 @@ jobs:
           script: |
             docker stop premind_be ||a true
             docker rm premind_be || true
-            docker pull 896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
+            docker pull 896823725236.dkr.ecr.ap-northeast-2.amazonaws.com/premind_be:latest
             docker run -d \
               --name premind_be \
               -e SPRING_PROFILES_ACTIVE=prod \
               -p 8080:8080 \
-              896823725236.dkr.ecr.ap-southeast-2.amazonaws.com/premind_be:latest
+              896823725236.dkr.ecr.ap-northeast-2.amazonaws.com/premind_be:latest
