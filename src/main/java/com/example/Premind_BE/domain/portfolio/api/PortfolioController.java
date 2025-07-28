@@ -56,4 +56,12 @@ public class PortfolioController {
         portfolioService.updatePortfolio(portfolioId, reqDto);
         return new MessageDto(portfolioId + "번 자소서가 수정되었습니다.");
     }
+
+    @Operation(summary = "포트폴리오 삭제 API")
+    @Parameter(name = "portfolioId", in = ParameterIn.PATH, description = "삭제하고자 하는 포트폴리오 id값", required = true)
+    @DeleteMapping("/{portfolioId}")
+    public MessageDto deletePortfolio(@PathVariable Long portfolioId) {
+        portfolioService.deletePortfolio(portfolioId);
+        return new MessageDto(portfolioId + "번 자소서가 삭제되었습니다.");
+    }
 }

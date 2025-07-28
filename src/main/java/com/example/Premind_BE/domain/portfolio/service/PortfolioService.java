@@ -140,4 +140,17 @@ public class PortfolioService {
 
         portfolio.update(jobCategories.get(0), jobCategories.get(1), jobCategories.get(2), dto);
     }
+
+    public void deletePortfolio(Long portfolioId) {
+        Portfolio portfolio = findPortfolio(portfolioId);
+        verifyUser(portfolio);
+
+        try {
+            fileService.deleteFile(portfolio.getFilePath());
+        } catch (Exception e) {
+            log.warn("Failed to delete S3 file: {}", portfolio.getFilePath(), e);
+        }
+
+        portfolioRepository.delete(portfolio);
+    }
 }

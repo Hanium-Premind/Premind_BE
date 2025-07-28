@@ -12,6 +12,7 @@ import javax.sound.sampled.Port;
 @AllArgsConstructor
 @Builder
 @Setter
+@Table(name = "portfolio_sections")
 public class PortfolioSection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

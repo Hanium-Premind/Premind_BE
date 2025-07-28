@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "InterestJob") // 테이블 이름이 대소문자 구분된다면 정확히 맞춰야 함
+@Table(name = "interest_jobs") // 테이블 이름이 대소문자 구분된다면 정확히 맞춰야 함
 public class InterestJob {
 
     @Id

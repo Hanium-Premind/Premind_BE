@@ -101,8 +101,6 @@ public class ResumeService {
 
     public MessageDto deleteResume(Long resumeId) {
         Resume resume = findResume(resumeId);
-
-        // 로그인 유저의 이력서인지 확인
         verifyUser(resume);
 
         resumeRepository.delete(resume);

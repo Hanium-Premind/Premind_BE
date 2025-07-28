@@ -19,6 +19,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "resumes")
 public class Resume {
 
     @Id

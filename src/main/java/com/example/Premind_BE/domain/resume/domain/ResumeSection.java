@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Setter
+@Table(name = "resume_sections")
 public class ResumeSection {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
