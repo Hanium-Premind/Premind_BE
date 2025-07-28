@@ -1,11 +1,14 @@
 package com.example.Premind_BE.domain.portfolio.api;
 
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
+import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioInquiryResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioQuestionResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioUploadResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PresignedUrlResDto;
 import com.example.Premind_BE.domain.portfolio.service.PortfolioService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +22,6 @@ import java.util.List;
 public class PortfolioController {
     private final PortfolioService portfolioService;
 
-    // presigned url 발급 받기
     @Operation(summary = "presigned url 발급",description = "포트폴리오 업로드 페이지에서 파일을 pdf업로드 항목에 드래그하여 놓는 순간 presigned url을 발급 받고 해당 url로 파일 업로드 진행")
     @PostMapping(value = "/file-upload")
     public PresignedUrlResDto generatePresignedUrl() {
@@ -36,5 +38,12 @@ public class PortfolioController {
     @GetMapping("/question/list")
     public List<PortfolioQuestionResDto> portfolioQuestionList() {
         return portfolioService.portfolioQuestionList();
+    }
+
+    @Operation(summary = "포트폴리오 상세 조회 API")
+    @Parameter(name = "portfolioId", in = ParameterIn.PATH, description = "조회하고자 하는 포트폴리오 id값", required = true)
+    @GetMapping("/{portfolioId}")
+    public PortfolioInquiryResDto portfolioInquiry(@PathVariable Long portfolioId) {
+        return portfolioService.portfolioInquiry(portfolioId);
     }
 }

@@ -11,6 +11,7 @@ import com.example.Premind_BE.domain.portfolio.dao.PortfolioQuestionRepository;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioRepository;
 import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
 import com.example.Premind_BE.domain.portfolio.domain.PortfolioSection;
+import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioInquiryResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PresignedUrlResDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioSectionReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
@@ -107,5 +108,25 @@ public class PortfolioService {
                 .stream()
                 .map(PortfolioQuestionResDto::from)
                 .toList();
+    }
+
+
+    public PortfolioInquiryResDto portfolioInquiry(Long portfolioId) {
+        // portfolioId로 포트폴리오 조회
+        Portfolio portfolio = findPortfolio(portfolioId);
+        verifyUser(portfolio);
+
+        return portfolioRepository.findPortfolioInquiry(portfolioId);
+    }
+
+    private Portfolio findPortfolio(Long portfolioId) {
+        return portfolioRepository.findById(portfolioId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PORTFOLIO_NOT_EXIST));
+    }
+
+    private void verifyUser(Portfolio portfolio) {
+        if(!portfolio.getUser().equals(getCurrentMember())) {
+            throw new CustomException(ErrorCode.PORTFOLIO_ACCESS_DENIED);
+        }
     }
 }

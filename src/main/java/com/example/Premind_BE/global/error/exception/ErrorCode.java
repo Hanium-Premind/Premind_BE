@@ -24,7 +24,9 @@ public enum ErrorCode {
     PHONE_NOT_VERIFIED(HttpStatus.BAD_REQUEST, "인증내역이 존재하지 않습니다."),
     PASSWORD_REAUTH_REQUIRED(HttpStatus.BAD_REQUEST, "기존 비밀번호 인증내역이 존재하지 않습니다." ),
     RESUME_ACCESS_DENIED(HttpStatus.FORBIDDEN, "자소서에 대한 접근 권한이 없습니다."),
-    RESUME_NOT_EXIST(HttpStatus.BAD_REQUEST, "존재하지 않는 자소서입니다.");
+    RESUME_NOT_EXIST(HttpStatus.BAD_REQUEST, "존재하지 않는 자소서 입니다."),
+    PORTFOLIO_NOT_EXIST(HttpStatus.BAD_REQUEST, "존재하지 않는 포트폴리오 입니다."),
+    PORTFOLIO_ACCESS_DENIED(HttpStatus.FORBIDDEN, "포트폴리오에 대한 접근 권한이 없습니다.");
 
 
     private final HttpStatus status;
