@@ -19,7 +19,7 @@ public class PortfolioSection {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "portfolio", nullable = false)
+    @JoinColumn(name = "portfolio_id", nullable = false)
     private Portfolio portfolio;
 
     private int sequence;

@@ -1,11 +1,13 @@
 package com.example.Premind_BE.domain.portfolio.api;
 
+import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUpdateReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioInquiryResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioQuestionResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioUploadResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PresignedUrlResDto;
 import com.example.Premind_BE.domain.portfolio.service.PortfolioService;
+import com.example.Premind_BE.global.common.response.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -45,5 +47,13 @@ public class PortfolioController {
     @GetMapping("/{portfolioId}")
     public PortfolioInquiryResDto portfolioInquiry(@PathVariable Long portfolioId) {
         return portfolioService.portfolioInquiry(portfolioId);
+    }
+
+    @Operation(summary = "포트폴리오 수정 API")
+    @Parameter(name = "portfolioId", in = ParameterIn.PATH, description = "수정하고자 하는 포트폴리오 id값", required = true)
+    @PutMapping("/{portfolioId}")
+    public MessageDto updatePortfolio(@PathVariable Long portfolioId, @RequestBody PortfolioUpdateReqDto reqDto) {
+        portfolioService.updatePortfolio(portfolioId, reqDto);
+        return new MessageDto(portfolioId + "번 자소서가 수정되었습니다.");
     }
 }

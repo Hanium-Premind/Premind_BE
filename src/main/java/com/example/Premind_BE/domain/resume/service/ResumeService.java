@@ -3,6 +3,7 @@ package com.example.Premind_BE.domain.resume.service;
 import com.example.Premind_BE.domain.job.dao.JobCategoryRepository;
 import com.example.Premind_BE.domain.job.domain.JobCategory;
 import com.example.Premind_BE.domain.job.domain.Level;
+import com.example.Premind_BE.domain.job.service.JobService;
 import com.example.Premind_BE.domain.resume.api.ResumeQuestionResDto;
 import com.example.Premind_BE.domain.resume.dao.ResumeQuestionRepository;
 import com.example.Premind_BE.domain.resume.dao.ResumeRepository;
@@ -35,16 +36,16 @@ public class ResumeService {
     private final UserRepository userRepository;
     private final JobCategoryRepository jobCategoryRepository;
     private final ResumeQuestionRepository resumeQuestionRepository;
+    private final JobService jobService;
 
     public ResumeUploadDto uploadResume(ResumeUploadDto resumeUploadDto) {
+        List<JobCategory> jobCategories = jobService.findJobCategory(resumeUploadDto.getJobMajorId(), resumeUploadDto.getJobMiddleId(), resumeUploadDto.getJobMinorId());
+
         Resume resume = Resume.builder()
                 .user(getCurrentMember())
-                .jobMajor(jobCategoryRepository.findByIdAndLevel(resumeUploadDto.getJobMajorId(), Level.MAJOR)
-                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
-                .jobMiddle(jobCategoryRepository.findByIdAndLevel(resumeUploadDto.getJobMiddleId(), Level.MIDDLE)
-                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
-                .jobMinor(jobCategoryRepository.findByIdAndLevel(resumeUploadDto.getJobMinorId(), Level.MINOR)
-                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
+                .jobMajor(jobCategories.get(0))
+                .jobMiddle(jobCategories.get(1))
+                .jobMinor(jobCategories.get(2))
                 .title(resumeUploadDto.getTitle())
                 .memo(resumeUploadDto.getMemo())
                 .company(resumeUploadDto.getCompany())
@@ -93,14 +94,9 @@ public class ResumeService {
         Resume resume = findResume(resumeId);
         verifyUser(resume); // 사용자 검증
 
-        JobCategory major = jobCategoryRepository.findById(dto.getJobMajorId())
-                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
-        JobCategory middle = jobCategoryRepository.findById(dto.getJobMiddleId())
-                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
-        JobCategory minor = jobCategoryRepository.findById(dto.getJobMinorId())
-                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
+        List<JobCategory> jobCategories = jobService.findJobCategory(dto.getJobMajorId(), dto.getJobMiddleId(), dto.getJobMinorId());
 
-        resume.update(major, middle, minor, dto);
+        resume.update(jobCategories.get(0), jobCategories.get(1), jobCategories.get(2), dto);
     }
 
     public MessageDto deleteResume(Long resumeId) {

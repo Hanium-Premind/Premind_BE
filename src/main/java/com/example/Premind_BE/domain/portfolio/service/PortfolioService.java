@@ -1,16 +1,16 @@
 package com.example.Premind_BE.domain.portfolio.service;
 
-import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.Headers;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.Premind_BE.domain.job.dao.JobCategoryRepository;
+import com.example.Premind_BE.domain.job.domain.JobCategory;
 import com.example.Premind_BE.domain.job.domain.Level;
+import com.example.Premind_BE.domain.job.service.JobService;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioQuestionRepository;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioRepository;
 import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
 import com.example.Premind_BE.domain.portfolio.domain.PortfolioSection;
+import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUpdateReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioInquiryResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PresignedUrlResDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioSectionReqDto;
@@ -29,11 +29,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -47,6 +45,7 @@ public class PortfolioService {
     private final FileService fileService;
     private final S3Properties s3Properties;
     private final AmazonS3 amazonS3;
+    private final JobService jobService;
 
     public PresignedUrlResDto generatePresignedUrl() {
         Long memberId = getCurrentMember().getId();
@@ -63,15 +62,12 @@ public class PortfolioService {
 
 
     public PortfolioUploadResDto uploadPortfolio(PortfolioUploadReqDto reqDto) {
-
+        List<JobCategory> jobCategories = jobService.findJobCategory(reqDto.getJobMajorId(), reqDto.getJobMiddleId(), reqDto.getJobMinorId());
         Portfolio portfolio = Portfolio.builder()
                 .user(getCurrentMember())
-                .jobMajor(jobCategoryRepository.findByIdAndLevel(reqDto.getJobMajorId(), Level.MAJOR)
-                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
-                .jobMiddle(jobCategoryRepository.findByIdAndLevel(reqDto.getJobMiddleId(), Level.MIDDLE)
-                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
-                .jobMinor(jobCategoryRepository.findByIdAndLevel(reqDto.getJobMinorId(), Level.MINOR)
-                        .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND)))
+                .jobMajor(jobCategories.get(0))
+                .jobMiddle(jobCategories.get(1))
+                .jobMinor(jobCategories.get(2))
                 .title(reqDto.getTitle())
                 .company(reqDto.getCompany())
                 .filePath(reqDto.getFileUrl())
@@ -128,5 +124,20 @@ public class PortfolioService {
         if(!portfolio.getUser().equals(getCurrentMember())) {
             throw new CustomException(ErrorCode.PORTFOLIO_ACCESS_DENIED);
         }
+    }
+
+    public void updatePortfolio(Long portfolioId, PortfolioUpdateReqDto dto) {
+        Portfolio portfolio = findPortfolio(portfolioId);
+        verifyUser(portfolio);
+
+        // 기존 파일 삭제
+        String existingFilePath = portfolio.getFilePath();
+        if (dto.getFileUrl() != null && !dto.getFileUrl().equals(existingFilePath)) {
+            fileService.deleteFile(existingFilePath); // fileUrl에서 key 추출해서 삭제
+        }
+
+        List<JobCategory> jobCategories = jobService.findJobCategory(dto.getJobMajorId(), dto.getJobMiddleId(), dto.getJobMinorId());
+
+        portfolio.update(jobCategories.get(0), jobCategories.get(1), jobCategories.get(2), dto);
     }
 }

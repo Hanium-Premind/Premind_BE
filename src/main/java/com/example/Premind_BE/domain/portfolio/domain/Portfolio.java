@@ -1,6 +1,8 @@
 package com.example.Premind_BE.domain.portfolio.domain;
 
 import com.example.Premind_BE.domain.job.domain.JobCategory;
+import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioSectionReqDto;
+import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUpdateReqDto;
 import com.example.Premind_BE.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -67,5 +69,28 @@ public class Portfolio {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public void update(JobCategory major, JobCategory middle, JobCategory minor, PortfolioUpdateReqDto dto) {
+        this.jobMajor = major;
+        this.jobMiddle = middle;
+        this.jobMinor = minor;
+        this.title = dto.getTitle();
+        this.company = dto.getCompany();
+        this.filePath = dto.getFileUrl();
+
+        // 기존 qa리스트 삭제 후 새로운 qa리스트로 업데이트
+        this.sections.clear();
+
+        int sq = 1;
+        for (PortfolioSectionReqDto sec : dto.getQaList()) {
+            PortfolioSection section = PortfolioSection.builder()
+                    .portfolio(this)
+                    .sequence(sq++)
+                    .question(sec.getQuestion())
+                    .answer(sec.getAnswer())
+                    .build();
+            this.addSection(section);
+        }
     }
 }
