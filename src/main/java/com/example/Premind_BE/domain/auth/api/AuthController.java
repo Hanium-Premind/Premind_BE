@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthService authService;
 
+    @Operation(summary = "로그인")
     @PostMapping("/login")
     public LoginResDto login(@RequestBody LoginReqDto request) {
         return authService.login(request);
@@ -30,7 +31,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "리프레시 토큰이 만료되었거나 유효하지 않음")
     })
     @PostMapping("/reissue")
-    public ReissueResDto refreshToken(@RequestBody ReissueReqDto requestDto) {
+    public ReissueResDto reissue(@RequestBody ReissueReqDto requestDto) {
         return authService.reissue(requestDto);
     }
 }

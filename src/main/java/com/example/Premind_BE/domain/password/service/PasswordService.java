@@ -4,17 +4,15 @@ import com.example.Premind_BE.domain.password.dto.request.ChangePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.ReceiveCodeReqDto;
 import com.example.Premind_BE.domain.password.dto.request.UpdatePasswordReqDto;
 import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
-import com.example.Premind_BE.domain.password.dto.response.EmailCheckResDto;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
+import com.example.Premind_BE.global.common.response.MessageDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.RedisUtil;
 import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +28,8 @@ public class PasswordService {
     private final RedisUtil redisUtil;
     private final UserUtil userUtil;
 
-    public EmailCheckResDto emailCheck(String email) {
-        if(userRepository.existsByEmail(email)) return new EmailCheckResDto("존재하는 이메일 정보입니다.");
+    public MessageDto emailCheck(String email) {
+        if(userRepository.existsByEmail(email)) return new MessageDto("존재하는 이메일 정보입니다.");
         else throw new CustomException(ErrorCode.EMAIL_NOT_EXIST);
     }
 

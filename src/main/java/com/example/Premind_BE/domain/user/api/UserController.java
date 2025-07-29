@@ -34,7 +34,6 @@ public class UserController {
     @GetMapping("/email/check")
     public EmailCheckResDto emailCheck(@RequestParam String email) {
         boolean isAvailable = userService.emailCheck(email);
-
         return new EmailCheckResDto("사용 가능한 이메일입니다.", isAvailable);
     }
 

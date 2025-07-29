@@ -46,8 +46,6 @@ public class User {
     @Column(name = "phone_number", length = 11)
     private String phoneNumber;
 
-
-
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }

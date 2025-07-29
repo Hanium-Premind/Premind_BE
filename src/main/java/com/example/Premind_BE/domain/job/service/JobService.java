@@ -63,7 +63,6 @@ public class JobService {
                 .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
         JobCategory minor = jobCategoryRepository.findByIdAndLevel(jobMinorId, Level.MINOR)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
-
         return List.of(major, middle, minor);
     }
 

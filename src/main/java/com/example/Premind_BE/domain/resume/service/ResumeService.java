@@ -1,8 +1,6 @@
 package com.example.Premind_BE.domain.resume.service;
 
-import com.example.Premind_BE.domain.job.dao.JobCategoryRepository;
 import com.example.Premind_BE.domain.job.domain.JobCategory;
-import com.example.Premind_BE.domain.job.domain.Level;
 import com.example.Premind_BE.domain.job.service.JobService;
 import com.example.Premind_BE.domain.resume.api.ResumeQuestionResDto;
 import com.example.Premind_BE.domain.resume.dao.ResumeQuestionRepository;
@@ -14,16 +12,12 @@ import com.example.Premind_BE.domain.resume.dto.ResumeUploadDto;
 import com.example.Premind_BE.domain.resume.dto.request.ResumeSectionReqDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeInquiryResDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
-import com.example.Premind_BE.domain.user.dao.UserRepository;
-import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.common.response.MessageDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,8 +28,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ResumeService {
     private final ResumeRepository resumeRepository;
-    private final UserRepository userRepository;
-    private final JobCategoryRepository jobCategoryRepository;
     private final ResumeQuestionRepository resumeQuestionRepository;
     private final JobService jobService;
     private final UserUtil userUtil;
