@@ -19,6 +19,7 @@ import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.common.response.MessageDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
+import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -37,12 +38,13 @@ public class ResumeService {
     private final JobCategoryRepository jobCategoryRepository;
     private final ResumeQuestionRepository resumeQuestionRepository;
     private final JobService jobService;
+    private final UserUtil userUtil;
 
     public ResumeUploadDto uploadResume(ResumeUploadDto resumeUploadDto) {
         List<JobCategory> jobCategories = jobService.findJobCategory(resumeUploadDto.getJobMajorId(), resumeUploadDto.getJobMiddleId(), resumeUploadDto.getJobMinorId());
 
         Resume resume = Resume.builder()
-                .user(getCurrentMember())
+                .user(userUtil.getCurrentUser())
                 .jobMajor(jobCategories.get(0))
                 .jobMiddle(jobCategories.get(1))
                 .jobMinor(jobCategories.get(2))
@@ -51,7 +53,6 @@ public class ResumeService {
                 .company(resumeUploadDto.getCompany())
                 .createdDate(LocalDateTime.now())
                 .build();
-
 
         // 질문-답변 리스트 연관관계 추가
         List<ResumeSectionReqDto> sectionList = resumeUploadDto.getQaList();
@@ -71,15 +72,8 @@ public class ResumeService {
         return resumeUploadDto;
     }
 
-    private User getCurrentMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // subject → email
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
     public List<ResumeListResDto> resumeList() {
-        return resumeRepository.findAllResumeListWithJobMinor(getCurrentMember());
+        return resumeRepository.findAllResumeListWithJobMinor(userUtil.getCurrentUser());
     }
 
     public ResumeInquiryResDto resumeInquiry(Long resumeId) {
@@ -108,7 +102,7 @@ public class ResumeService {
     }
 
     private void verifyUser(Resume resume) {
-        if (!resume.getUser().equals(getCurrentMember())) {
+        if (!resume.getUser().equals(userUtil.getCurrentUser())) {
             throw new CustomException(ErrorCode.RESUME_ACCESS_DENIED);
         }
     }

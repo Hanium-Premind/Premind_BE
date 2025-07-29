@@ -21,6 +21,7 @@ import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
+import com.example.Premind_BE.global.util.UserUtil;
 import com.example.Premind_BE.infra.s3.S3Properties;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +47,10 @@ public class PortfolioService {
     private final S3Properties s3Properties;
     private final AmazonS3 amazonS3;
     private final JobService jobService;
+    private final UserUtil userUtil;
 
     public PresignedUrlResDto generatePresignedUrl() {
-        Long memberId = getCurrentMember().getId();
+        Long memberId = userUtil.getCurrentUser().getId();
         String fileKey = fileService.generateUUID();
         String fileName = fileService.createFileName(memberId, fileKey);
 
@@ -59,12 +61,10 @@ public class PortfolioService {
         return new PresignedUrlResDto(presignedUrl, fileKey);
     }
 
-
-
     public PortfolioUploadResDto uploadPortfolio(PortfolioUploadReqDto reqDto) {
         List<JobCategory> jobCategories = jobService.findJobCategory(reqDto.getJobMajorId(), reqDto.getJobMiddleId(), reqDto.getJobMinorId());
         Portfolio portfolio = Portfolio.builder()
-                .user(getCurrentMember())
+                .user(userUtil.getCurrentUser())
                 .jobMajor(jobCategories.get(0))
                 .jobMiddle(jobCategories.get(1))
                 .jobMinor(jobCategories.get(2))
@@ -92,20 +92,12 @@ public class PortfolioService {
         return new PortfolioUploadResDto(portfolio.getId());
     }
 
-    private User getCurrentMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // subject → email
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
     public List<PortfolioQuestionResDto> portfolioQuestionList() {
         return portfolioQuestionRepository.findAll()
                 .stream()
                 .map(PortfolioQuestionResDto::from)
                 .toList();
     }
-
 
     public PortfolioInquiryResDto portfolioInquiry(Long portfolioId) {
         // portfolioId로 포트폴리오 조회
@@ -121,7 +113,8 @@ public class PortfolioService {
     }
 
     private void verifyUser(Portfolio portfolio) {
-        if(!portfolio.getUser().equals(getCurrentMember())) {
+
+        if(!portfolio.getUser().equals(userUtil.getCurrentUser())) {
             throw new CustomException(ErrorCode.PORTFOLIO_ACCESS_DENIED);
         }
     }

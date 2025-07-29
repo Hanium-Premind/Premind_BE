@@ -57,11 +57,11 @@ public class JobService {
     }
 
     public List<JobCategory> findJobCategory(Long jobMajorId, Long jobMiddleId, Long jobMinorId) {
-        JobCategory major = jobCategoryRepository.findById(jobMajorId)
+        JobCategory major = jobCategoryRepository.findByIdAndLevel(jobMajorId, Level.MAJOR)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
-        JobCategory middle = jobCategoryRepository.findById(jobMiddleId)
+        JobCategory middle = jobCategoryRepository.findByIdAndLevel(jobMiddleId, Level.MIDDLE)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
-        JobCategory minor = jobCategoryRepository.findById(jobMinorId)
+        JobCategory minor = jobCategoryRepository.findByIdAndLevel(jobMinorId, Level.MINOR)
                 .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
 
         return List.of(major, middle, minor);

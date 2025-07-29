@@ -10,6 +10,7 @@ import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.RedisUtil;
+import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -27,6 +28,7 @@ public class PasswordService {
     private final SmsService smsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final RedisUtil redisUtil;
+    private final UserUtil userUtil;
 
     public EmailCheckResDto emailCheck(String email) {
         if(userRepository.existsByEmail(email)) return new EmailCheckResDto("존재하는 이메일 정보입니다.");
@@ -69,7 +71,7 @@ public class PasswordService {
 
 
     public void verifyPassword(String password) {
-        User user = getCurrentMember(); // 현재 로그인한 사용자
+        User user = userUtil.getCurrentUser(); // 현재 로그인한 사용자
         Long userId = user.getId();     // Redis 키 식별용 ID
 
         // 비밀번호 불일치 시 예외 발생
@@ -80,16 +82,8 @@ public class PasswordService {
         redisUtil.set("password_verified:" + userId, "true", Duration.ofMinutes(15));
     }
 
-
-    private User getCurrentMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // subject → email
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
     public void changePassword(ChangePasswordReqDto changePasswordReqDto) {
-        User user = getCurrentMember();
+        User user = userUtil.getCurrentUser();
         String verified = redisUtil.get("password_verified:" + user.getId());
         if (!"true".equals(verified)) {
             throw new CustomException(ErrorCode.PASSWORD_REAUTH_REQUIRED);

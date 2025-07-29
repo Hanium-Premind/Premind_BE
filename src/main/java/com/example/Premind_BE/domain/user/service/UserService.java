@@ -13,6 +13,7 @@ import com.example.Premind_BE.domain.user.dto.response.PersonalInfoResDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.RedisUtil;
+import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class UserService{
     private final InterestJobRepository interestJobRepository;
     private final SmsService smsService;
     private final RedisUtil redisUtil;
+    private final UserUtil userUtil;
 
     public User userRegister(RegisterReqDto registerReqDto) {
         String phoneNumber = registerReqDto.getPhoneNumber();
@@ -71,9 +73,6 @@ public class UserService{
         return savedUser;
     }
 
-
-
-
     public boolean emailCheck(String email) {
         // 이미 존재하는 이메일로 회원가입시 오류 발생
         if(userRepository.findByEmail(email).isPresent()) {
@@ -90,15 +89,8 @@ public class UserService{
         smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
     }
 
-    private User getCurrentMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // subject → email
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-    }
-
     public PersonalInfoResDto personalInfo() {
-        User currentMember = getCurrentMember();
+        User currentMember = userUtil.getCurrentUser();
 
         List<String> jobNames = interestJobRepository.findByUser(currentMember)
                 .stream()
@@ -118,9 +110,8 @@ public class UserService{
 
     @Transactional
     public void updatePersonalInfo(UpdatePersonalInfoReqDto dto) {
-        User user = getCurrentMember();
+        User user = userUtil.getCurrentUser();
         user.updateInfo(dto);
-
     }
 
 }
