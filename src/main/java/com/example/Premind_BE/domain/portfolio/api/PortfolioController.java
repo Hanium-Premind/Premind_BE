@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/portfolio")
+@RequestMapping("/portfolios")
 @RequiredArgsConstructor
 @Tag(name = "Portfolio API", description = "포트폴리오 관련 API입니다.")
 public class PortfolioController {

@@ -1,4 +1,4 @@
-package com.example.Premind_BE.domain.resume.api;
+package com.example.Premind_BE.domain.resume.dto.response;
 
 import com.example.Premind_BE.domain.resume.domain.ResumeQuestion;
 import io.swagger.v3.oas.annotations.media.Schema;

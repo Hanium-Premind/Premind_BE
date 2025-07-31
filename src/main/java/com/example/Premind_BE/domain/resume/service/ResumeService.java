@@ -2,7 +2,7 @@ package com.example.Premind_BE.domain.resume.service;
 
 import com.example.Premind_BE.domain.job.domain.JobCategory;
 import com.example.Premind_BE.domain.job.service.JobService;
-import com.example.Premind_BE.domain.resume.api.ResumeQuestionResDto;
+import com.example.Premind_BE.domain.resume.dto.response.ResumeQuestionResDto;
 import com.example.Premind_BE.domain.resume.dao.ResumeQuestionRepository;
 import com.example.Premind_BE.domain.resume.dao.ResumeRepository;
 import com.example.Premind_BE.domain.resume.domain.Resume;

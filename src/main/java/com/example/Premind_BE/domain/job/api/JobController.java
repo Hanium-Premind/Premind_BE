@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/job")
+@RequestMapping("/jobs")
 @RequiredArgsConstructor
 @Tag(name = "Job API", description = "직무 관련 API입니다.")
 public class JobController {

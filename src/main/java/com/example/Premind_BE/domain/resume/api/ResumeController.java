@@ -1,5 +1,6 @@
 package com.example.Premind_BE.domain.resume.api;
 
+import com.example.Premind_BE.domain.resume.dto.response.ResumeQuestionResDto;
 import com.example.Premind_BE.domain.resume.dto.ResumeUpdateDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeInquiryResDto;
 import com.example.Premind_BE.domain.resume.dto.ResumeUploadDto;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/resume")
+@RequestMapping("/resumes")
 @RequiredArgsConstructor
 @Tag(name = "Resume API", description = "자기소개서 관련 API입니다.")
 public class ResumeController {
