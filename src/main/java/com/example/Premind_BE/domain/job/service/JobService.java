@@ -57,13 +57,24 @@ public class JobService {
     }
 
     public List<JobCategory> findJobCategory(Long jobMajorId, Long jobMiddleId, Long jobMinorId) {
-        JobCategory major = jobCategoryRepository.findByIdAndLevel(jobMajorId, Level.MAJOR)
-                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
-        JobCategory middle = jobCategoryRepository.findByIdAndLevel(jobMiddleId, Level.MIDDLE)
-                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
-        JobCategory minor = jobCategoryRepository.findByIdAndLevel(jobMinorId, Level.MINOR)
-                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
+        List<Long> ids = List.of(jobMajorId, jobMiddleId, jobMinorId);
+
+        List<JobCategory> categories = jobCategoryRepository.findAllByIdIn(ids);
+        if (categories.size() != 3) {
+            throw new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND);
+        }
+
+        JobCategory major = findByLevelOrThrow(categories, Level.MAJOR);
+        JobCategory middle = findByLevelOrThrow(categories, Level.MIDDLE);
+        JobCategory minor = findByLevelOrThrow(categories, Level.MINOR);
+
         return List.of(major, middle, minor);
     }
 
+    private JobCategory findByLevelOrThrow(List<JobCategory> list, Level level) {
+        return list.stream()
+                .filter(c -> c.getLevel() == level)
+                .findFirst()
+                .orElseThrow(() -> new CustomException(ErrorCode.JOB_CATEGORY_NOT_FOUND));
+    }
 }

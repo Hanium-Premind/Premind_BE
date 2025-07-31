@@ -11,4 +11,6 @@ public interface JobCategoryRepository extends JpaRepository<JobCategory, Long> 
     List<JobCategory> findByLevel(Level level);
     Optional<JobCategory> findByIdAndLevel(Long id, Level level);
     List<JobCategory> findByLevelAndParentId(Level level, Long parentId);
+
+    List<JobCategory> findAllByIdIn(List<Long> ids);
 }

@@ -1,6 +1,7 @@
 package com.example.Premind_BE.global.util;
 
 
+import com.example.Premind_BE.domain.auth.dto.CustomUserDetails;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.global.error.exception.CustomException;
@@ -21,4 +22,5 @@ public class UserUtil {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
 }
