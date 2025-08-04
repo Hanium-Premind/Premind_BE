@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Schema(description = "새로운 비밀번호를 설정하기 위한 요청 dto")
 public class UpdatePasswordReqDto {
-    @Schema(description = "비밀번호를 변경하고자하는 사용자의 이메일 (이메일 확인하기에서 입력받았던 이메일 값을 그대로 요청에 사용)")
-    private String email;
+    @Schema(description = "비밀번호를 변경하고자하는 사용자의 아이디 (이메일 확인하기에서 입력받았던 이메일 값을 그대로 요청에 사용)")
+    private String username;
     @Schema(description = "변경하고자하는 새로운 비밀번호")
     private String newPassword;
 }

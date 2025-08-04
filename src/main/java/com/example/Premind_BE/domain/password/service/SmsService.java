@@ -30,11 +30,11 @@ public class SmsService {
     @Value("${coolsms.apisecret}")
     private String apiSecret;
 
-    // 인증번호 생성 (6자리 추천)
+    // 인증번호 생성
     private String createRandomNumber() {
         Random rand = new Random();
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 4; i++) {
             sb.append(rand.nextInt(10)); // 0~9
         }
         return sb.toString();

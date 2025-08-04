@@ -18,8 +18,8 @@ public class UserUtil {
 
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // subject → email
-        return userRepository.findByEmail(email)
+        String username = authentication.getName(); // subject → email
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 

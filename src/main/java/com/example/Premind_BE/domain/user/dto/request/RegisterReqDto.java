@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "사용자 회원가입 요청 관련 DTO")
 public class RegisterReqDto {
-    @Schema(description = "사용자 이메일, 이메일 형식을 지켜야 한다.")
-    private String email;
+    @Schema(description = "사용자 아이디")
+    private String username;
     @Schema(description = "사용자 비밀번호")
     private String password;
     @Schema(description = "사용자 이름")
@@ -27,8 +27,8 @@ public class RegisterReqDto {
     private Gender gender;
     @Schema(description = "사용자 전화번호, 01012345678 형식으로")
     private String phoneNumber;
-    @Schema(description = "관심 직무 리스트 예: ['developer', 'designer']")
-    private List<String> interestJobs;
+    @Schema(description = "전송받은 인증번호")
+    private String code;
 
     public LocalDate getBirthAsLocalDate() {
         return LocalDate.parse(this.birth, DateTimeFormatter.ofPattern("yyyyMMdd"));

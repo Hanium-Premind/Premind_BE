@@ -1,6 +1,5 @@
 package com.example.Premind_BE.domain.user.service;
 
-import com.example.Premind_BE.domain.password.dto.request.VerifyCodeReqDto;
 import com.example.Premind_BE.domain.password.service.SmsService;
 import com.example.Premind_BE.domain.user.dao.InterestJobRepository;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
@@ -12,7 +11,6 @@ import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.response.PersonalInfoResDto;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
-import com.example.Premind_BE.global.util.RedisUtil;
 import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,25 +30,19 @@ public class UserService{
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final InterestJobRepository interestJobRepository;
     private final SmsService smsService;
-    private final RedisUtil redisUtil;
     private final UserUtil userUtil;
 
     public User userRegister(RegisterReqDto registerReqDto) {
+        // 인증번호 검증하기
         String phoneNumber = registerReqDto.getPhoneNumber();
-
-        //  전화번호 인증 여부 확인
-        String isVerified = redisUtil.get("verify:" + phoneNumber);
-        if (!"true".equals(isVerified)) {
-            throw new CustomException(ErrorCode.PHONE_NOT_VERIFIED);
-        }
+        smsService.verifyCode(phoneNumber, registerReqDto.getCode());
 
         // 이미 존재하는 이메일 체크
-        emailCheck(registerReqDto.getEmail());
+        usernameCheck(registerReqDto.getUsername());
 
-        // 사용자 저장
-        User savedUser = userRepository.save(
+        return userRepository.save(
                 User.builder()
-                        .email(registerReqDto.getEmail())
+                        .username(registerReqDto.getUsername())
                         .password(bCryptPasswordEncoder.encode(registerReqDto.getPassword()))
                         .name(registerReqDto.getName())
                         .birth(registerReqDto.getBirthAsLocalDate())
@@ -58,33 +50,18 @@ public class UserService{
                         .phoneNumber(phoneNumber)
                         .build()
         );
-
-        // 관심 직무 저장
-        interestJobRepository.saveAll(registerReqDto.getInterestJobs().stream()
-                .map(job -> InterestJob.builder()
-                        .user(savedUser)
-                        .job(job)
-                        .build())
-                .toList()
-        );
-
-        return savedUser;
     }
 
-    public boolean emailCheck(String email) {
+    public boolean usernameCheck(String username) {
         // 이미 존재하는 이메일로 회원가입시 오류 발생
-        if(userRepository.findByEmail(email).isPresent()) {
-            throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
+        if(userRepository.findByUsername(username).isPresent()) {
+            throw new CustomException(ErrorCode.DUPLICATE_ID);
         }
         return true; // 사용 가능
     }
 
     public void receiveCode(UserReceiveCodeReqDto sendCodeRequestDto) {
         smsService.certificateSMS(sendCodeRequestDto.getPhoneNumber());
-    }
-
-    public void verifyCode(VerifyCodeReqDto verifyCodeReqDto) {
-        smsService.verifyCode(verifyCodeReqDto.getPhoneNumber(), verifyCodeReqDto.getCode());
     }
 
     public PersonalInfoResDto personalInfo() {
@@ -96,7 +73,7 @@ public class UserService{
                 .collect(Collectors.toList());
 
         return PersonalInfoResDto.builder()
-                .email(currentMember.getEmail())
+                .email(currentMember.getUsername())
                 .name(currentMember.getName())
                 .birth(currentMember.getBirth().toString())
                 .gender(currentMember.getGender().toString())
@@ -104,7 +81,6 @@ public class UserService{
                 .interestJobs(jobNames)
                 .build();
     }
-
 
     @Transactional
     public void updatePersonalInfo(UpdatePersonalInfoReqDto dto) {

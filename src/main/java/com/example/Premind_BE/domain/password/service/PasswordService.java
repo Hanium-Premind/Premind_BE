@@ -28,8 +28,8 @@ public class PasswordService {
     private final RedisUtil redisUtil;
     private final UserUtil userUtil;
 
-    public MessageDto emailCheck(String email) {
-        if(userRepository.existsByEmail(email)) return new MessageDto("존재하는 이메일 정보입니다.");
+    public MessageDto usernameCheck(String username) {
+        if(userRepository.existsByUsername(username)) return new MessageDto("존재하는 아이디 정보입니다.");
         else throw new CustomException(ErrorCode.EMAIL_NOT_EXIST);
     }
 
@@ -55,7 +55,7 @@ public class PasswordService {
 
     public void updatePassword(UpdatePasswordReqDto updatePasswordReqDto) {
         // 이메일로 사용자 정보 찾기
-        User user = userRepository.findByEmail(updatePasswordReqDto.getEmail())
+        User user = userRepository.findByUsername(updatePasswordReqDto.getUsername())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         String isVerified = redisUtil.get("verify:" + user.getPhoneNumber());

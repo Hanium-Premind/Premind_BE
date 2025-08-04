@@ -53,7 +53,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             // 임시 User 생성 (DB 조회 대신)
             User userEntity = User.builder()
-                    .email(email)
+                    .username(email)
                     .password("temppassword") // 주의: 비밀번호는 사용되지 않음
                     .build();
 

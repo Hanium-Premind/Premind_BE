@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "이메일 중복확인 관련 응답 DTO")
-public class EmailCheckResDto {
+public class UsernameCheckResDto {
     @Schema(description = "중복확인 메시지")
     private String message;
     @Schema(description = "true이면 사용가능함")
