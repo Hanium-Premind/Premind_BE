@@ -43,7 +43,10 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/register", "/users/username/check", "/auth/login", "/auth/reissue", "/password/email/check", "/password/receive/code", "/password/verify/code", "/users/receive/code", "/users/verify/code", "/password/update", "health_check", "error_check").permitAll()
+                        .requestMatchers("/users/register", "/users/username/check", "/auth/login", "/auth/reissue", "/password/email/check", "/password/receive/code", "/password/verify/code", "/users/receive/code", "/users/verify/code", "/password/update", "health_check", "error_check", "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/v2/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtFilter(jwtUtil), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
