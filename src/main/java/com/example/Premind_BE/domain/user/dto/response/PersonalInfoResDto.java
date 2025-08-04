@@ -14,8 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @Schema(description = "개인정보 수정시 기존 개인 정보 조회 응답 DTO")
 public class PersonalInfoResDto {
-    @Schema(description = "사용자 이메일 (변경 불가)")
-    private String email;
+    @Schema(description = "사용자 아이디 (변경 불가)")
+    private String username;
     @Schema(description = "기존 사용자 이름")
     private String name;
     @Schema(description = "기존 사용자 생년월일")

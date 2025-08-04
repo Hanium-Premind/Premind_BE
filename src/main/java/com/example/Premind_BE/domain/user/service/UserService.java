@@ -73,7 +73,7 @@ public class UserService{
                 .collect(Collectors.toList());
 
         return PersonalInfoResDto.builder()
-                .email(currentMember.getUsername())
+                .username(currentMember.getUsername())
                 .name(currentMember.getName())
                 .birth(currentMember.getBirth().toString())
                 .gender(currentMember.getGender().toString())
