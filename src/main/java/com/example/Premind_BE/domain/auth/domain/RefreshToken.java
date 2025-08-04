@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class RefreshToken implements Serializable {
 
     @Id
-    private String email;
+    private String username;
 
     private String token;
 
@@ -24,8 +24,8 @@ public class RefreshToken implements Serializable {
 
     private LocalDateTime updatedAt;
 
-    public RefreshToken(String email, String token) {
-        this.email = email;
+    public RefreshToken(String username, String token) {
+        this.username = username;
         this.token = token;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();

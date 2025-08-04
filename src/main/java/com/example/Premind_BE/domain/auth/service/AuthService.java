@@ -29,14 +29,14 @@ public class AuthService {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            request.getEmail(), request.getPassword()
+                            request.getUsername(), request.getPassword()
                     )
             );
 
-            String accessToken = jwtUtil.createAccessToken(request.getEmail());
-            String refreshToken = jwtUtil.createRefreshToken(request.getEmail());
+            String accessToken = jwtUtil.createAccessToken(request.getUsername());
+            String refreshToken = jwtUtil.createRefreshToken(request.getUsername());
 
-            refreshTokenRepository.save(new RefreshToken(request.getEmail(), refreshToken));
+            refreshTokenRepository.save(new RefreshToken(request.getUsername(), refreshToken));
 
             return new LoginResDto(accessToken, refreshToken);
 

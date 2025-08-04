@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "로그인 요청을 위한 DTO")
 public class LoginReqDto {
     @Schema(description = "사용자 이메일")
-    private String email;
+    private String username;
     @Schema(description = "사용자 비밀번호")
     private String password;
 }
