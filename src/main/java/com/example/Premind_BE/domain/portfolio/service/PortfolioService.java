@@ -4,9 +4,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.Premind_BE.domain.job.domain.JobCategory;
 import com.example.Premind_BE.domain.job.service.JobService;
-import com.example.Premind_BE.domain.portfolio.dao.PortfolioQuestionRepository;
+import com.example.Premind_BE.domain.portfolio.dao.PortfolioQuestionRedisRepository;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioRepository;
 import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
+import com.example.Premind_BE.domain.portfolio.domain.PortfolioQuestion;
 import com.example.Premind_BE.domain.portfolio.domain.PortfolioSection;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioSectionReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUpdateReqDto;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -33,7 +35,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PortfolioService {
     private final PortfolioRepository portfolioRepository;
-    private final PortfolioQuestionRepository portfolioQuestionRepository;
+    private final PortfolioQuestionRedisRepository portfolioQuestionRepository;
     private final FileService fileService;
     private final S3Properties s3Properties;
     private final AmazonS3 amazonS3;
@@ -84,8 +86,9 @@ public class PortfolioService {
     }
 
     public List<PortfolioQuestionResDto> portfolioQuestionList() {
-        return portfolioQuestionRepository.findAll()
-                .stream()
+        Iterable<PortfolioQuestion> all = portfolioQuestionRepository.findAll();
+
+        return StreamSupport.stream(all.spliterator(),false)
                 .map(PortfolioQuestionResDto::from)
                 .toList();
     }

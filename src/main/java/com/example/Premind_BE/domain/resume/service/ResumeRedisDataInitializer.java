@@ -10,7 +10,7 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class RedisDataInitializer implements CommandLineRunner {
+public class ResumeRedisDataInitializer implements CommandLineRunner {
 
     private final ResumeQuestionRedisRepository redisRepository;
 

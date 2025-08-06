@@ -12,7 +12,6 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Builder
 public class ResumeQuestion implements Serializable {
-
     @Id
     private Long id;
     private String question;

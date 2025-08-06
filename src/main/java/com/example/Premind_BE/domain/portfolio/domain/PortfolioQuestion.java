@@ -5,20 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
 
-@Entity
-@Table(name = "portfolio_questions")
+import java.io.Serializable;
+
+@RedisHash("PortfolioQuestion")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PortfolioQuestion {
+public class PortfolioQuestion implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "portfolio_question_id")
     private Long id;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String question;
 }
 
