@@ -1,23 +1,20 @@
 package com.example.Premind_BE.domain.resume.domain;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
-@Entity
-@Table(name = "resume_questions")
+import java.io.Serializable;
+
+@RedisHash("ResumeQuestion")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResumeQuestion {
+public class ResumeQuestion implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
     private String question;
 }
+

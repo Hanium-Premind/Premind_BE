@@ -2,8 +2,9 @@ package com.example.Premind_BE.domain.resume.service;
 
 import com.example.Premind_BE.domain.job.domain.JobCategory;
 import com.example.Premind_BE.domain.job.service.JobService;
+import com.example.Premind_BE.domain.resume.domain.ResumeQuestion;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeQuestionResDto;
-import com.example.Premind_BE.domain.resume.dao.ResumeQuestionRepository;
+import com.example.Premind_BE.domain.resume.dao.ResumeQuestionRedisRepository;
 import com.example.Premind_BE.domain.resume.dao.ResumeRepository;
 import com.example.Premind_BE.domain.resume.domain.Resume;
 import com.example.Premind_BE.domain.resume.domain.ResumeSection;
@@ -22,13 +23,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class ResumeService {
     private final ResumeRepository resumeRepository;
-    private final ResumeQuestionRepository resumeQuestionRepository;
+    private final ResumeQuestionRedisRepository resumeQuestionRepository;
     private final JobService jobService;
     private final UserUtil userUtil;
 
@@ -105,8 +107,10 @@ public class ResumeService {
     }
 
     public List<ResumeQuestionResDto> resumeQuestionList() {
-        return resumeQuestionRepository.findAll()
-                .stream()
+        Iterable<ResumeQuestion> all = resumeQuestionRepository.findAll();
+
+        // Iterable을 Stream으로 변환
+        return StreamSupport.stream(all.spliterator(), false)
                 .map(ResumeQuestionResDto::from)
                 .toList();
     }
