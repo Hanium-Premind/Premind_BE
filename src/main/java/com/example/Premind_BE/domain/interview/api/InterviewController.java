@@ -1,6 +1,7 @@
 package com.example.Premind_BE.domain.interview.api;
 
 
+import com.example.Premind_BE.domain.interview.dto.response.PortfolioResDto;
 import com.example.Premind_BE.domain.interview.dto.response.ResumeResDto;
 import com.example.Premind_BE.domain.interview.service.InterviewService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,5 +24,11 @@ public class InterviewController {
     @GetMapping(value = "/resumes")
     public List<ResumeResDto> resumeList() {
         return interviewService.resumeList();
+    }
+
+    @Operation(summary = "면접 옵션 선택에서 포트폴리오 목록 조회")
+    @GetMapping(value = "/portfolios")
+    public List<PortfolioResDto> portfolioList() {
+        return interviewService.portfolioList();
     }
 }

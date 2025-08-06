@@ -1,5 +1,6 @@
 package com.example.Premind_BE.domain.interview.dto.response;
 
+import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
 import com.example.Premind_BE.domain.resume.domain.Resume;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResumeResDto {
+public class PortfolioResDto {
     private Long id;
     private String title;
 
-    public static ResumeResDto from(Resume resume) {
-        ResumeResDto dto = new ResumeResDto();
-        dto.id = resume.getId();
-        dto.title = resume.getTitle();
+    public static PortfolioResDto from(Portfolio portfolio) {
+        PortfolioResDto dto = new PortfolioResDto();
+        dto.id = portfolio.getId();
+        dto.title = portfolio.getTitle();
         return dto;
     }
 }
