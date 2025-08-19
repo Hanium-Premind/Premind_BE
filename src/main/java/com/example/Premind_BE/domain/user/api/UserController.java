@@ -2,6 +2,7 @@ package com.example.Premind_BE.domain.user.api;
 
 import com.example.Premind_BE.domain.user.domain.User;
 import com.example.Premind_BE.domain.user.dto.request.RegisterReqDto;
+import com.example.Premind_BE.domain.user.dto.request.RegisterVerifyCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.request.UpdatePersonalInfoReqDto;
 import com.example.Premind_BE.domain.user.dto.request.UserReceiveCodeReqDto;
 import com.example.Premind_BE.domain.user.dto.response.UsernameCheckResDto;
@@ -30,14 +31,21 @@ public class UserController {
         return new UsernameCheckResDto("사용 가능한 이메일입니다.", isAvailable);
     }
 
-    @Operation(summary = "회원가입 완료를 위해 인증번호 받기", description = "회원가입에서 인증번호 받기")
+    @Operation(summary = "회원가입 페이지에서 인증번호 받기")
     @PostMapping("/receive/code")
     public MessageDto receiveCode(@Valid @RequestBody UserReceiveCodeReqDto sendCodeRequestDto) {
         userService.receiveCode(sendCodeRequestDto);
         return new MessageDto("인증번호가 발송되었습니다.");
     }
 
-    @Operation(summary = "회원가입과 회원가입을 위한 인증번호 검증을 동시에 진행", description = "회원가입시 중복확인을 거친 이메일로만 회원가입 가능")
+    @Operation(summary = "회원가입 페이지에서 인증번호 검증하기")
+    @PostMapping("/verify/code")
+    public MessageDto verifyCode(@Valid @RequestBody RegisterVerifyCodeReqDto registerVerifyCodeReqDto) {
+         userService.verifyCode(registerVerifyCodeReqDto);
+         return new MessageDto("인증번호이 완료되었습니다.");
+    }
+
+    @Operation(summary = "회원가입을 위한 요청", description = "전화번호 인증이 완료된 사용자만이 회원가입이 가능하다.")
     @PostMapping("/register")
     public User userRegister(@RequestBody RegisterReqDto registerReqDto) {
         return userService.userRegister(registerReqDto);

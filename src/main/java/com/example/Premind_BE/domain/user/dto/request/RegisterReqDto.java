@@ -26,9 +26,7 @@ public class RegisterReqDto {
     @Schema(description = "사용자 성별, FEMALE, MALE 값으로 전송")
     private Gender gender;
     @Schema(description = "사용자 전화번호, 01012345678 형식으로")
-    private String phoneNumber;
-    @Schema(description = "전송받은 인증번호")
-    private String code;
+    private String  phoneNumber;
 
     public LocalDate getBirthAsLocalDate() {
         return LocalDate.parse(this.birth, DateTimeFormatter.ofPattern("yyyyMMdd"));
