@@ -73,14 +73,14 @@ public class ResumeService {
     public ResumeInquiryResDto resumeInquiry(Long resumeId) {
         // 조회하고자하는 자소서의 작성자가 아니라면
         Resume resume = findResume(resumeId);
-        verifyUser(resume); // 사용자 검증
+        userUtil.verifyResumeUser(resume);
 
         return resumeRepository.findResumeInquiry(resumeId);
     }
 
     public void updateResume(Long resumeId, ResumeUpdateDto dto) {
         Resume resume = findResume(resumeId);
-        verifyUser(resume); // 사용자 검증
+        userUtil.verifyResumeUser(resume);
 
         List<JobCategory> jobCategories = jobService.findJobCategory(dto.getJobMajorId(), dto.getJobMiddleId(), dto.getJobMinorId());
 
@@ -89,16 +89,10 @@ public class ResumeService {
 
     public MessageDto deleteResume(Long resumeId) {
         Resume resume = findResume(resumeId);
-        verifyUser(resume);
+        userUtil.verifyResumeUser(resume);
 
         resumeRepository.delete(resume);
         return new MessageDto(resumeId + "번 자기소개서가 삭제되었습니다.");
-    }
-
-    private void verifyUser(Resume resume) {
-        if (!resume.getUser().equals(userUtil.getCurrentUser())) {
-            throw new CustomException(ErrorCode.RESUME_ACCESS_DENIED);
-        }
     }
 
     private Resume findResume(Long resumeId) {

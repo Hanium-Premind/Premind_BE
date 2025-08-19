@@ -93,7 +93,7 @@ public class PortfolioService {
     public PortfolioInquiryResDto portfolioInquiry(Long portfolioId) {
         // portfolioId로 포트폴리오 조회
         Portfolio portfolio = findPortfolio(portfolioId);
-        verifyUser(portfolio);
+        userUtil.verifyPortfolioUser(portfolio);
 
         return portfolioRepository.findPortfolioInquiry(portfolioId);
     }
@@ -103,16 +103,9 @@ public class PortfolioService {
                 .orElseThrow(() -> new CustomException(ErrorCode.PORTFOLIO_NOT_EXIST));
     }
 
-    private void verifyUser(Portfolio portfolio) {
-
-        if(!portfolio.getUser().equals(userUtil.getCurrentUser())) {
-            throw new CustomException(ErrorCode.PORTFOLIO_ACCESS_DENIED);
-        }
-    }
-
     public void updatePortfolio(Long portfolioId, PortfolioUpdateReqDto dto) {
         Portfolio portfolio = findPortfolio(portfolioId);
-        verifyUser(portfolio);
+        userUtil.verifyPortfolioUser(portfolio);
 
         // 기존 파일 삭제
         String existingFilePath = portfolio.getFilePath();
@@ -127,7 +120,7 @@ public class PortfolioService {
 
     public void deletePortfolio(Long portfolioId) {
         Portfolio portfolio = findPortfolio(portfolioId);
-        verifyUser(portfolio);
+        userUtil.verifyPortfolioUser(portfolio);
 
         try {
             fileService.deleteFile(portfolio.getFilePath());

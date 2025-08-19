@@ -63,7 +63,8 @@ public class InterviewRecord {
     private int questionNum;
 
     @Enumerated(value = EnumType.STRING)
-    private InterviewerType interviewerType;
+    private InterviewerStyle interviewerStyle;
+
 
     @Builder.Default
     @OneToMany(mappedBy = "interviewRecord", cascade = CascadeType.ALL, orphanRemoval = true)
