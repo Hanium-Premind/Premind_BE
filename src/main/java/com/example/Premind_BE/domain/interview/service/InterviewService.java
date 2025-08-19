@@ -1,5 +1,8 @@
 package com.example.Premind_BE.domain.interview.service;
 
+import com.example.Premind_BE.domain.interview.dao.InterviewQARepository;
+import com.example.Premind_BE.domain.interview.domain.InterviewQA;
+import com.example.Premind_BE.domain.interview.dto.ai.response.GenerateQAResDto;
 import com.example.Premind_BE.domain.interview.dto.ai.response.PracticeQAFeedbackResDto;
 import com.example.Premind_BE.domain.interview.dao.InterviewRecordRepository;
 import com.example.Premind_BE.domain.interview.domain.InterviewModeType;
@@ -20,7 +23,6 @@ import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.File;
 import java.util.List;
 
 @Service
@@ -41,6 +42,7 @@ public class InterviewService {
     private final WebClient interviewApiClient;
     private final ResumeSectionRepository resumeSectionRepository;
     private final InterviewRecordRepository interviewRecordRepository;
+    private final InterviewQARepository interviewQARepository;
 
     public List<ResumeResDto> resumeList() {
         return resumeRepository.findByUser(userUtil.getCurrentUser())
@@ -153,7 +155,40 @@ public class InterviewService {
 
 
     public PracticeQAFeedbackResDto questionSubmit(PracticeSubmitReqDto reqDto, Long interviewRecordId) {
-        return uploadVideo(reqDto.getJob_id(), reqDto.getFile()); // 응답을 받으면 질문-답변 -> InterviewQA에 저장, 질문-답변 피드백 -> QAFeedback에 저장
+        // 1. 영상 업로드 및 피드백 응답 받기
+        PracticeQAFeedbackResDto resDto = uploadVideo(reqDto.getJob_id(), reqDto.getFile());
+
+        // 2. InterviewRecord 조회
+        InterviewRecord record = interviewRecordRepository.findById(interviewRecordId).orElseThrow(
+                () -> new CustomException(ErrorCode.INTERVIEW_RECORD_NOT_FOUND)
+        );
+
+        // 3. InterviewQA 생성 및 저장
+        InterviewQA interviewQA = InterviewQA.builder()
+                .interviewRecord(record)
+                .question(resDto.getQuestion())
+                .answer(resDto.getAnswer_text())
+                .sequence(resDto.getTurn())
+                .answerTime(reqDto.getAnswer_time())
+                .qaFeedback(resDto.getShort_feedback())
+                .build();
+
+        interviewQARepository.save(interviewQA); // 저장 빠짐
+
+        return resDto;
+
+        // 최종 응답 DTO 반환
+      /*  return PracticeSubmitResDto.builder()
+                .job_id(reqDto.getJob_id())
+                .sequence(resDto.getTurn())
+                .total_question_num(resDto.getTotal_turns())
+                .question(resDto.getQuestion())
+                .short_feedback(resDto.getShort_feedback())
+                .next_question(resDto.getNext_question())
+                .finished(resDto.isFinished())
+                .report(resDto.getReport())
+                .build();
+*/
     }
 
     public PracticeQAFeedbackResDto uploadVideo(String jobId, MultipartFile videoFile) {

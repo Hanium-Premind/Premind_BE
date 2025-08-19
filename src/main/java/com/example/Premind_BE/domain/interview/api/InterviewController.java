@@ -46,7 +46,6 @@ public class InterviewController {
 
     @Operation(summary = "면접 질문에 대한 답변 제출하기 + 피드백 받기")
     @Parameter(name = "interviewRecordId", in = ParameterIn.PATH, description = "면접이 진행되고 있는 면접기록 id값", required = true)
-    @GetMapping(value = "/practice/submit/{interviewRecordId}")
     @PostMapping(value = "/practice/submit/{interviewRecordId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public PracticeQAFeedbackResDto questionSubmit(
             @ModelAttribute PracticeSubmitReqDto reqDto,
