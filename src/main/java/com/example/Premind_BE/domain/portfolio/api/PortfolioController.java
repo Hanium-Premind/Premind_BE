@@ -2,11 +2,9 @@ package com.example.Premind_BE.domain.portfolio.api;
 
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUpdateReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioInquiryResDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioQuestionResDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioUploadResDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PresignedUrlResDto;
+import com.example.Premind_BE.domain.portfolio.dto.response.*;
 import com.example.Premind_BE.domain.portfolio.service.PortfolioService;
+import com.example.Premind_BE.domain.resume.dto.response.ResumeListResDto;
 import com.example.Premind_BE.global.common.response.MessageDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -64,4 +62,11 @@ public class PortfolioController {
         portfolioService.deletePortfolio(portfolioId);
         return new MessageDto(portfolioId + "번 자소서가 삭제되었습니다.");
     }
+
+    @Operation(summary = "포트폴리오 목록 조회 API")
+    @GetMapping("/list")
+    public List<PortfolioListResDto> portfolioList() {
+        return portfolioService.portfolioList();
+    }
+
 }

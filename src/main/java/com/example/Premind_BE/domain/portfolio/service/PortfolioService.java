@@ -12,10 +12,7 @@ import com.example.Premind_BE.domain.portfolio.domain.PortfolioSection;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioSectionReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUpdateReqDto;
 import com.example.Premind_BE.domain.portfolio.dto.request.PortfolioUploadReqDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioInquiryResDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioQuestionResDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioUploadResDto;
-import com.example.Premind_BE.domain.portfolio.dto.response.PresignedUrlResDto;
+import com.example.Premind_BE.domain.portfolio.dto.response.*;
 import com.example.Premind_BE.global.error.exception.CustomException;
 import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.UserUtil;
@@ -139,5 +136,9 @@ public class PortfolioService {
         }
 
         portfolioRepository.delete(portfolio);
+    }
+
+    public List<PortfolioListResDto> portfolioList() {
+        return portfolioRepository.findAllPortfolioListWithJobMinor(userUtil.getCurrentUser());
     }
 }

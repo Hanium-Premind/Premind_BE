@@ -4,8 +4,10 @@ import com.example.Premind_BE.domain.job.domain.QJobCategory;
 import com.example.Premind_BE.domain.portfolio.domain.QPortfolio;
 import com.example.Premind_BE.domain.portfolio.domain.QPortfolioSection;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioInquiryResDto;
+import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioListResDto;
 import com.example.Premind_BE.domain.portfolio.dto.response.PortfolioSectionResDto;
 import com.example.Premind_BE.domain.resume.dto.response.ResumeSectionDto;
+import com.example.Premind_BE.domain.user.domain.User;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -67,5 +69,25 @@ public class PortfolioRepositoryCustomImpl implements PortfolioRepositoryCustom{
 
         portfolioDto.setSections(sections);
         return portfolioDto;
+    }
+
+    @Override
+    public List<PortfolioListResDto> findAllPortfolioListWithJobMinor(User currentUser) {
+        QPortfolio portfolio = QPortfolio.portfolio;
+        QJobCategory jobMinor = QJobCategory.jobCategory;
+
+        return queryFactory
+                .select(Projections.constructor(PortfolioListResDto.class,
+                        portfolio.id,
+                        portfolio.title,
+                        jobMinor.name,
+                        portfolio.company,
+                        portfolio.createdDate
+                ))
+                .from(portfolio)
+                .join(portfolio.jobMinor, jobMinor)
+                .where(portfolio.user.eq(currentUser))
+                .orderBy(portfolio.createdDate.desc())
+                .fetch();
     }
 }
