@@ -10,6 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +66,13 @@ public class InterviewRecord {
     @Enumerated(value = EnumType.STRING)
     private InterviewerStyle interviewerStyle;
 
+    private String sessionId;
+
+    private LocalDateTime createdDate;
+
+    public void putSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     @Builder.Default
     @OneToMany(mappedBy = "interviewRecord", cascade = CascadeType.ALL, orphanRemoval = true)

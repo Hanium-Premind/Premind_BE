@@ -1,18 +1,18 @@
 package com.example.Premind_BE.domain.interview.service;
 
 import com.example.Premind_BE.domain.interview.dao.InterviewQARepository;
-import com.example.Premind_BE.domain.interview.domain.InterviewQA;
-import com.example.Premind_BE.domain.interview.dto.ai.response.GenerateQAResDto;
-import com.example.Premind_BE.domain.interview.dto.ai.response.PracticeQAFeedbackResDto;
 import com.example.Premind_BE.domain.interview.dao.InterviewRecordRepository;
-import com.example.Premind_BE.domain.interview.domain.InterviewModeType;
-import com.example.Premind_BE.domain.interview.domain.InterviewRecord;
-import com.example.Premind_BE.domain.interview.domain.InterviewerStyle;
+import com.example.Premind_BE.domain.interview.dao.TotalFeedbackRepository;
+import com.example.Premind_BE.domain.interview.domain.*;
 import com.example.Premind_BE.domain.interview.dto.ai.request.StartPracticeItem;
 import com.example.Premind_BE.domain.interview.dto.ai.request.StartPracticeRequest;
+import com.example.Premind_BE.domain.interview.dto.ai.response.*;
 import com.example.Premind_BE.domain.interview.dto.request.PracticeQuestionsReqDto;
 import com.example.Premind_BE.domain.interview.dto.request.PracticeSubmitReqDto;
-import com.example.Premind_BE.domain.interview.dto.response.*;
+import com.example.Premind_BE.domain.interview.dto.response.PortfolioResDto;
+import com.example.Premind_BE.domain.interview.dto.response.PracticeQuestionResDto;
+import com.example.Premind_BE.domain.interview.dto.response.PracticeSubmitResDto;
+import com.example.Premind_BE.domain.interview.dto.response.ResumeResDto;
 import com.example.Premind_BE.domain.portfolio.dao.PortfolioRepository;
 import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
 import com.example.Premind_BE.domain.resume.dao.ResumeRepository;
@@ -23,26 +23,24 @@ import com.example.Premind_BE.global.error.exception.ErrorCode;
 import com.example.Premind_BE.global.util.UserUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class InterviewService {
+public class PracticeInterviewService {
     private final ResumeRepository resumeRepository;
     private final PortfolioRepository portfolioRepository;
     private final UserUtil userUtil;
-    private final WebClient interviewApiClient;
     private final ResumeSectionRepository resumeSectionRepository;
     private final InterviewRecordRepository interviewRecordRepository;
     private final InterviewQARepository interviewQARepository;
+    private final APIWebClient apiWebClient;
+    private final TotalFeedbackRepository totalFeedbackRepository;
 
     public List<ResumeResDto> resumeList() {
         return resumeRepository.findByUser(userUtil.getCurrentUser())
@@ -60,32 +58,37 @@ public class InterviewService {
 
     // 수정 예정 (연습 모드 첫 번째 질문 생성)
     public PracticeQuestionResDto practiceCreateQuestions(PracticeQuestionsReqDto reqDto) {
-        // 자소서 조회
+        // 1. 자소서 & 포트폴리오 조회
         Resume resume = getResume(reqDto.getResumeId());
-
-        // 포트폴리오 조회
         Portfolio portfolio = getPortfolio(reqDto.getPortfolioId());
 
-        // InterviewRecord 생성
+        // 2. InterviewRecord 생성 및 저장
+        InterviewRecord interviewRecord = createInterviewRecord(reqDto, resume, portfolio);
+
+        // 3. AI API 요청 생성 및 호출
+        GenerateQAResDto resDto = requestQuestionsFromAI(reqDto, resume, interviewRecord);
+
+        // 4. 응답 DTO 반환
+        return buildPracticeQuestionResDto(interviewRecord, resDto);
+    }
+
+    private InterviewRecord createInterviewRecord(PracticeQuestionsReqDto reqDto, Resume resume, Portfolio portfolio) {
         InterviewRecord interviewRecord = InterviewRecord.builder()
-                // .jobMajor()
-                // .jobMiddle()
-                //  .jobMinor()
                 .resume(resume)
                 .portfolio(portfolio)
                 .user(userUtil.getCurrentUser())
                 .interviewModeType(InterviewModeType.PRACTICE)
                 .questionNum(reqDto.getNumQuestions())
                 .interviewerStyle(InterviewerStyle.valueOf(reqDto.getInterviewerStyle()))
+                .createdDate(LocalDateTime.now())
                 .build();
 
-        // InterviewRecordType 생성 (나중에)
-        interviewRecordRepository.save(interviewRecord);
+        return interviewRecordRepository.save(interviewRecord);
+    }
 
-        // resumeSection -> item
+    private GenerateQAResDto requestQuestionsFromAI(PracticeQuestionsReqDto reqDto, Resume resume, InterviewRecord interviewRecord) {
         List<StartPracticeItem> items = resumeSectionRepository.findByResume(resume);
 
-        // AI에 면접 질문 생성 요청 보내기
         StartPracticeRequest apiRequest = StartPracticeRequest.builder()
                 .items(items)
                 .style(styleToString(reqDto.getInterviewerStyle()))
@@ -95,12 +98,15 @@ public class InterviewService {
                 .company_name(resume.getCompany())
                 .build();
 
-        GenerateQAResDto resDto = startPractice(apiRequest);
+        GenerateQAResDto resDto = apiWebClient.startPractice(apiRequest);
 
-        // InterviewQA 생성???? - 나중에 고민 (답변이랑 한번에 저장할지...)
+        interviewRecord.putSessionId(resDto.getJob_id()); // 세션 ID 저장
 
-        return PracticeQuestionResDto
-                .builder()
+        return resDto;
+    }
+
+    private PracticeQuestionResDto buildPracticeQuestionResDto(InterviewRecord interviewRecord, GenerateQAResDto resDto) {
+        return PracticeQuestionResDto.builder()
                 .interview_record_id(interviewRecord.getId())
                 .job_id(resDto.getJob_id())
                 .question(resDto.getQuestion())
@@ -109,20 +115,6 @@ public class InterviewService {
                 .build();
     }
 
-    public GenerateQAResDto startPractice(StartPracticeRequest req) {
-        return interviewApiClient.post()
-                .uri("/api/v1/practice/start")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .bodyValue(req)
-                .retrieve()
-                .onStatus(s -> s.is4xxClientError() || s.is5xxServerError(),
-                        resp -> resp.bodyToMono(String.class)
-                                .defaultIfEmpty("Unknown error")
-                                .map(msg -> new RuntimeException("Interview API error: " + msg)))
-                .bodyToMono(GenerateQAResDto.class)
-                .block(); // 동기 방식
-    }
 
     private String styleToString(String interviewerStyle) {
         return switch (interviewerStyle) {
@@ -156,15 +148,31 @@ public class InterviewService {
 
     public PracticeSubmitResDto practiceQuestionSubmit(PracticeSubmitReqDto reqDto, Long interviewRecordId) {
         // 1. 영상 업로드 및 피드백 응답 받기
-        PracticeQAFeedbackResDto resDto = uploadVideo(reqDto.getJob_id(), reqDto.getFile());
+        PracticeQAFeedbackResDto resDto = apiWebClient.uploadVideo(reqDto.getJob_id(), reqDto.getFile());
 
-        // 2. InterviewRecord 조회
-        InterviewRecord record = interviewRecordRepository.findById(interviewRecordId).orElseThrow(
-                () -> new CustomException(ErrorCode.INTERVIEW_RECORD_NOT_FOUND)
-        );
+        // 2. InterviewRecord 조회 및 검증
+        InterviewRecord record = findAndVerifyInterviewRecord(interviewRecordId);
+
+        // 3. InterviewQA 저장
+        saveInterviewQA(record, reqDto, resDto);
+
+        // 4. 마지막 응답이면 최종 리포트 저장
+        PracticeTotalReportResDto report = resDto.isFinished()
+                ? saveFinalReport(record, resDto)
+                : null;
+
+        // 5. 최종 응답 DTO 반환
+        return buildPracticeSubmitResDto(reqDto, resDto, report);
+    }
+
+    private InterviewRecord findAndVerifyInterviewRecord(Long interviewRecordId) {
+        InterviewRecord record = interviewRecordRepository.findById(interviewRecordId)
+                .orElseThrow(() -> new CustomException(ErrorCode.INTERVIEW_RECORD_NOT_FOUND));
         userUtil.verifyInterviewReccordUser(record);
+        return record;
+    }
 
-        // 3. InterviewQA 생성 및 저장
+    private void saveInterviewQA(InterviewRecord record, PracticeSubmitReqDto reqDto, PracticeQAFeedbackResDto resDto) {
         InterviewQA interviewQA = InterviewQA.builder()
                 .interviewRecord(record)
                 .question(resDto.getQuestion())
@@ -173,10 +181,50 @@ public class InterviewService {
                 .answerTime(reqDto.getAnswer_time())
                 .qaFeedback(resDto.getShort_feedback())
                 .build();
-
         interviewQARepository.save(interviewQA);
+    }
 
-        // 최종 응답 DTO 반환
+    private PracticeTotalReportResDto saveFinalReport(InterviewRecord record, PracticeQAFeedbackResDto resDto) {
+        Double totalTime = getTotalTime(record.getCreatedDate(), LocalDateTime.now());
+        PracticeTotalReportResDto r = resDto.getReport();
+
+        // Report DTO 빌드
+        PracticeTotalReportResDto report = PracticeTotalReportResDto.builder()
+                .total_100(r.getTotal_100())
+                .summary(r.getSummary())
+                .voice(new VoiceSection(r.getVoice().getFluency_20(), r.getVoice().getSpeed_20(), r.getVoice().getTotal_40(), r.getVoice().getFeedback()))
+                .gaze(new GazeSection(r.getGaze().getEye_10(), r.getGaze().getExpression_10(), r.getGaze().getTotal_20(), r.getGaze().getFeedback()))
+                .content(new Content(r.getContent().getAppropriateness_40(), r.getContent().getFeedback()))
+                .jobName(null) // TODO: 수정 예정
+                .totalQuestion(resDto.getTotal_turns())
+                .totalTime(totalTime)
+                .build();
+
+        // DB 저장
+        totalFeedbackRepository.save(TotalFeedback.builder()
+                .interviewRecord(record)
+                .totalScore(r.getTotal_100())
+                .summary(r.getSummary())
+                .voiceFluency(r.getVoice().getFluency_20())
+                .voiceSpeed(r.getVoice().getSpeed_20())
+                .voiceTotal(r.getVoice().getTotal_40())
+                .voiceFeedback(r.getVoice().getFeedback())
+                .gazeEye(r.getGaze().getEye_10())
+                .gazeExpression(r.getGaze().getExpression_10())
+                .gazeTotal(r.getGaze().getTotal_20())
+                .gazeFeedback(r.getGaze().getFeedback())
+                .contentAppropriateness(r.getContent().getAppropriateness_40())
+                .contentFeedback(r.getContent().getFeedback())
+                .jobName(null) // TODO: 수정 예정
+                .totalQuestion(resDto.getTotal_turns())
+                .totalTime(totalTime)
+                .build()
+        );
+
+        return report;
+    }
+
+    private PracticeSubmitResDto buildPracticeSubmitResDto(PracticeSubmitReqDto reqDto, PracticeQAFeedbackResDto resDto, PracticeTotalReportResDto report) {
         return PracticeSubmitResDto.builder()
                 .job_id(reqDto.getJob_id())
                 .sequence(resDto.getTurn())
@@ -185,28 +233,18 @@ public class InterviewService {
                 .short_feedback(resDto.getShort_feedback())
                 .next_question(resDto.getNext_question())
                 .finished(resDto.isFinished())
-                .report(resDto.getReport())
+                .report(report)
                 .build();
     }
 
-    public PracticeQAFeedbackResDto uploadVideo(String jobId, MultipartFile videoFile) {
-        MultipartBodyBuilder builder = new MultipartBodyBuilder();
-        builder.part("job_id", jobId);
-        builder.part("file", videoFile.getResource())
-                .filename(videoFile.getOriginalFilename())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM);
 
-        return interviewApiClient.post()
-                .uri("/api/v1/practice/submit")
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .accept(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromMultipartData(builder.build()))
-                .retrieve()
-                .onStatus(s -> s.is4xxClientError() || s.is5xxServerError(),
-                        resp -> resp.bodyToMono(String.class)
-                                .defaultIfEmpty("Unknown error")
-                                .map(msg -> new RuntimeException("Interview API error: " + msg)))
-                .bodyToMono(PracticeQAFeedbackResDto.class)
-                .block();
+    private Double getTotalTime(LocalDateTime start, LocalDateTime end) {
+        if (start == null || end == null) {
+            return null;
+        }
+        // Duration으로 두 시간 차이를 계산
+        Duration duration = Duration.between(start, end);
+        return duration.toMillis() / 1000.0;
     }
+
 }

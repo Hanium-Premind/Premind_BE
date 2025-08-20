@@ -1,14 +1,13 @@
 package com.example.Premind_BE.domain.interview.api;
 
 
-import com.example.Premind_BE.domain.interview.dto.ai.response.PracticeQAFeedbackResDto;
 import com.example.Premind_BE.domain.interview.dto.request.PracticeQuestionsReqDto;
 import com.example.Premind_BE.domain.interview.dto.request.PracticeSubmitReqDto;
 import com.example.Premind_BE.domain.interview.dto.response.PortfolioResDto;
 import com.example.Premind_BE.domain.interview.dto.response.PracticeQuestionResDto;
 import com.example.Premind_BE.domain.interview.dto.response.PracticeSubmitResDto;
 import com.example.Premind_BE.domain.interview.dto.response.ResumeResDto;
-import com.example.Premind_BE.domain.interview.service.InterviewService;
+import com.example.Premind_BE.domain.interview.service.PracticeInterviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -24,24 +23,24 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Interview API", description = "면접 관련 API입니다.")
 public class InterviewController {
-    private final InterviewService interviewService;
+    private final PracticeInterviewService practiceInterviewService;
 
     @Operation(summary = "면접 옵션 선택에서 자소서 목록 조회")
     @GetMapping(value = "/resumes")
     public List<ResumeResDto> resumeList() {
-        return interviewService.resumeList();
+        return practiceInterviewService.resumeList();
     }
 
     @Operation(summary = "면접 옵션 선택에서 포트폴리오 목록 조회")
     @GetMapping(value = "/portfolios")
     public List<PortfolioResDto> portfolioList() {
-        return interviewService.portfolioList();
+        return practiceInterviewService.portfolioList();
     }
 
     @Operation(summary = "연습모드: 면접 옵션을 기반으로 면접 질문 생성하기")
     @GetMapping(value = "/practice/questions")
     public PracticeQuestionResDto practiceCreateQuestions(@RequestBody PracticeQuestionsReqDto reqDto) {
-        return interviewService.practiceCreateQuestions(reqDto);
+        return practiceInterviewService.practiceCreateQuestions(reqDto);
     }
 
     @Operation(summary = "연습모드: 면접 질문에 대한 답변 제출하기 + 피드백 받기")
@@ -50,6 +49,6 @@ public class InterviewController {
     public PracticeSubmitResDto practiceQuestionSubmit(
             @ModelAttribute PracticeSubmitReqDto reqDto,
             @PathVariable Long interviewRecordId) {
-        return interviewService.practiceQuestionSubmit(reqDto, interviewRecordId);
+        return practiceInterviewService.practiceQuestionSubmit(reqDto, interviewRecordId);
     }
 }
