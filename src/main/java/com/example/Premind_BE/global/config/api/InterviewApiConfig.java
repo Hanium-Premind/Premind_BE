@@ -18,7 +18,7 @@ public class InterviewApiConfig {
     @Bean
     public WebClient interviewApiClient(
             @Value("${interview.base-url}") String baseUrl,
-            @Value("${interview.timeout-sec:20}") long timeoutSec
+            @Value("${interview.timeout-sec:120}") long timeoutSec
     ) {
         HttpClient httpClient = HttpClient.create()
                 .responseTimeout(Duration.ofSeconds(timeoutSec));

@@ -59,7 +59,7 @@ public class InterviewService {
     }
 
     // 수정 예정 (연습 모드 첫 번째 질문 생성)
-    public PracticeQuestionResDto practiceQuestions(PracticeQuestionsReqDto reqDto) {
+    public PracticeQuestionResDto practiceCreateQuestions(PracticeQuestionsReqDto reqDto) {
         // 자소서 조회
         Resume resume = getResume(reqDto.getResumeId());
 
@@ -154,7 +154,7 @@ public class InterviewService {
     }
 
 
-    public PracticeQAFeedbackResDto questionSubmit(PracticeSubmitReqDto reqDto, Long interviewRecordId) {
+    public PracticeSubmitResDto practiceQuestionSubmit(PracticeSubmitReqDto reqDto, Long interviewRecordId) {
         // 1. 영상 업로드 및 피드백 응답 받기
         PracticeQAFeedbackResDto resDto = uploadVideo(reqDto.getJob_id(), reqDto.getFile());
 
@@ -162,6 +162,7 @@ public class InterviewService {
         InterviewRecord record = interviewRecordRepository.findById(interviewRecordId).orElseThrow(
                 () -> new CustomException(ErrorCode.INTERVIEW_RECORD_NOT_FOUND)
         );
+        userUtil.verifyInterviewReccordUser(record);
 
         // 3. InterviewQA 생성 및 저장
         InterviewQA interviewQA = InterviewQA.builder()
@@ -173,12 +174,10 @@ public class InterviewService {
                 .qaFeedback(resDto.getShort_feedback())
                 .build();
 
-        interviewQARepository.save(interviewQA); // 저장 빠짐
-
-        return resDto;
+        interviewQARepository.save(interviewQA);
 
         // 최종 응답 DTO 반환
-      /*  return PracticeSubmitResDto.builder()
+        return PracticeSubmitResDto.builder()
                 .job_id(reqDto.getJob_id())
                 .sequence(resDto.getTurn())
                 .total_question_num(resDto.getTotal_turns())
@@ -188,7 +187,6 @@ public class InterviewService {
                 .finished(resDto.isFinished())
                 .report(resDto.getReport())
                 .build();
-*/
     }
 
     public PracticeQAFeedbackResDto uploadVideo(String jobId, MultipartFile videoFile) {

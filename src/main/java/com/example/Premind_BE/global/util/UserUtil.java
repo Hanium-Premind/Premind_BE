@@ -2,6 +2,7 @@ package com.example.Premind_BE.global.util;
 
 
 import com.example.Premind_BE.domain.auth.dto.CustomUserDetails;
+import com.example.Premind_BE.domain.interview.domain.InterviewRecord;
 import com.example.Premind_BE.domain.portfolio.domain.Portfolio;
 import com.example.Premind_BE.domain.resume.domain.Resume;
 import com.example.Premind_BE.domain.user.dao.UserRepository;
@@ -34,6 +35,12 @@ public class UserUtil {
     public void verifyPortfolioUser(Portfolio portfolio) {
         if(!portfolio.getUser().equals(getCurrentUser())) {
             throw new CustomException(ErrorCode.PORTFOLIO_ACCESS_DENIED);
+        }
+    }
+
+    public void verifyInterviewReccordUser(InterviewRecord record) {
+        if(!record.getUser().equals(getCurrentUser())) {
+            throw new CustomException(ErrorCode.INTERVIEW_RECORD_ACCESS_DENIED);
         }
     }
 }

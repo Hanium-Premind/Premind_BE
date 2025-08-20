@@ -38,18 +38,18 @@ public class InterviewController {
         return interviewService.portfolioList();
     }
 
-    @Operation(summary = "면접 옵션을 기반으로 연습모드 면접 질문 생성하기")
+    @Operation(summary = "연습모드: 면접 옵션을 기반으로 면접 질문 생성하기")
     @GetMapping(value = "/practice/questions")
-    public PracticeQuestionResDto practiceQuestions(@RequestBody PracticeQuestionsReqDto reqDto) {
-        return interviewService.practiceQuestions(reqDto);
+    public PracticeQuestionResDto practiceCreateQuestions(@RequestBody PracticeQuestionsReqDto reqDto) {
+        return interviewService.practiceCreateQuestions(reqDto);
     }
 
-    @Operation(summary = "면접 질문에 대한 답변 제출하기 + 피드백 받기")
+    @Operation(summary = "연습모드: 면접 질문에 대한 답변 제출하기 + 피드백 받기")
     @Parameter(name = "interviewRecordId", in = ParameterIn.PATH, description = "면접이 진행되고 있는 면접기록 id값", required = true)
     @PostMapping(value = "/practice/submit/{interviewRecordId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public PracticeQAFeedbackResDto questionSubmit(
+    public PracticeSubmitResDto practiceQuestionSubmit(
             @ModelAttribute PracticeSubmitReqDto reqDto,
             @PathVariable Long interviewRecordId) {
-        return interviewService.questionSubmit(reqDto, interviewRecordId);
+        return interviewService.practiceQuestionSubmit(reqDto, interviewRecordId);
     }
 }

@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PracticeSubmitResDto {
-    @Schema(description = "AI 세션 ID (추후 요청에 사용될 수 있으므로 값 저장해두기)")
-    private String job_id;
     @Schema(description = "질문순서")
     private int sequence;
     @Schema(description = "전체 질문 수")
@@ -22,6 +20,8 @@ public class PracticeSubmitResDto {
     private String question;
     @Schema(description = "질문-답변에 대한 즉각 피드백")
     private String short_feedback;
+    @Schema(description = "다음 질문에 대한 AI 세션 ID (추후 요청에 사용될 수 있으므로 값 저장해두기)")
+    private String job_id;
     @Schema(description = "다음 질문")
     private String next_question;
     @Schema(description = "마지막 질문 여부 (마지막이면 true값)")

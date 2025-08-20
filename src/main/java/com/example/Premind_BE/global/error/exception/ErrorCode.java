@@ -27,7 +27,8 @@ public enum ErrorCode {
     RESUME_NOT_EXIST(HttpStatus.BAD_REQUEST, "존재하지 않는 자소서 입니다."),
     PORTFOLIO_NOT_EXIST(HttpStatus.BAD_REQUEST, "존재하지 않는 포트폴리오 입니다."),
     PORTFOLIO_ACCESS_DENIED(HttpStatus.FORBIDDEN, "포트폴리오에 대한 접근 권한이 없습니다."),
-    INTERVIEW_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 면접기록입니다." );
+    INTERVIEW_RECORD_NOT_FOUND(HttpStatus.NOT_FOUND,"존재하지 않는 면접기록입니다." ),
+    INTERVIEW_RECORD_ACCESS_DENIED(HttpStatus.FORBIDDEN, "면접 기록에 대한 접근 권한이 없습니다.");
 
 
     private final HttpStatus status;
