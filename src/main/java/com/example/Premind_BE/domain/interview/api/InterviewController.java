@@ -38,7 +38,7 @@ public class InterviewController {
     }
 
     @Operation(summary = "연습모드: 면접 옵션을 기반으로 면접 질문 생성하기")
-    @GetMapping(value = "/practice/start")
+    @PostMapping(value = "/practice/start")
     public PracticeQuestionResDto practiceCreateQuestions(@RequestBody PracticeQuestionsReqDto reqDto) {
         return practiceInterviewService.practiceCreateQuestions(reqDto);
     }
