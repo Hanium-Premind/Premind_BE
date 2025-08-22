@@ -12,5 +12,4 @@ public class ResumeSectionDto {
     private int sequence;
     private String question;
     private String answer;
-    private Integer characterCount;
 }
