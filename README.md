@@ -30,7 +30,7 @@ Premind Backend Repo입니다.
 <br>
 
 ## 🏠 서비스 구성도
-![alt text](서비스그림.png)
+![서비스 그림](img/서비스그림.png)
 ## front-end
 1. 면접모드, 면접유형, 선택 직무, 면접관 스타일, 자소서, 포트폴리오 등의 옵션을 선택한다.  
 2. 사용자가 선택한 옵션을 전달한다.  
@@ -54,7 +54,7 @@ Premind Backend Repo입니다.
 <br>
 
 ## 🫙 ERD
-![alt text](image-1.png)
+![ERD](img/ERD.png)
 <br>
 
 
