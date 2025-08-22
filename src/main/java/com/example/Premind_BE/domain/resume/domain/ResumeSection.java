@@ -26,6 +26,4 @@ public class ResumeSection {
     private String question;
     @Column(nullable = false, columnDefinition = "TEXT")
     private String answer;
-
-    private Integer characterCount;
 }

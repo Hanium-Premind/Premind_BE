@@ -86,7 +86,6 @@ public class Resume {
                     .sequence(sq++)
                     .question(sec.getQuestion())
                     .answer(sec.getAnswer())
-                    .characterCount(sec.getCharacterCount())
                     .build();
             this.addSection(section);
         }

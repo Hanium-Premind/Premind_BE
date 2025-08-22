@@ -56,7 +56,6 @@ public class ResumeService {
                     .sequence(i + 1)
                     .question(section.getQuestion())
                     .answer(section.getAnswer())
-                    .characterCount(section.getCharacterCount())
                     .build();
             resume.addSection(resumeSection); // 연관관계 설정
         }

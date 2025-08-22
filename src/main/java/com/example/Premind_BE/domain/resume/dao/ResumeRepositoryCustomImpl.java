@@ -80,8 +80,7 @@ public class ResumeRepositoryCustomImpl implements ResumeRepositoryCustom{
                         section.id,
                         section.sequence,
                         section.question,
-                        section.answer,
-                        section.characterCount
+                        section.answer
                 ))
                 .from(section)
                 .where(section.resume.id.eq(resumeId))
