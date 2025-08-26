@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @GetMapping("/health_check")
     public TestResponseDto healthCheck() {
-        return new TestResponseDto("테스트에 성공하였습니다");
+        return new TestResponseDto("테스트에 성공하였습니다!");
     }
 
     @GetMapping("/error_check")
