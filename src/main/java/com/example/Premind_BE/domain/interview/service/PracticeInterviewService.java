@@ -254,12 +254,12 @@ public class PracticeInterviewService {
         if (interviewMode != null && !interviewMode.isBlank()) {
             try {
                 modeType = InterviewModeType.valueOf(interviewMode.toUpperCase());
-                // PRACTICE / REAL / REVIEW 문자열을 enum으로 변환
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("❌ 지원하지 않는 면접 모드입니다: " + interviewMode);
             }
         }
 
-        return interviewRecordRepository.findByAllRecord(modeType);
+        return interviewRecordRepository.findByAllRecord(interviewMode); // String 그대로 넘김
     }
+
 }

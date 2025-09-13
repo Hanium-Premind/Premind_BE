@@ -6,5 +6,5 @@ import com.example.Premind_BE.domain.interview.dto.response.PreviousRecordsResDt
 import java.util.List;
 
 public interface InterviewRecordRepositoryCustom {
-    List<PreviousRecordsResDto> findByAllRecord(InterviewModeType interviewMode);
+    List<PreviousRecordsResDto> findByAllRecord(String interviewMode);
 }
