@@ -3,10 +3,7 @@ package com.example.Premind_BE.domain.interview.api;
 
 import com.example.Premind_BE.domain.interview.dto.request.PracticeQuestionsReqDto;
 import com.example.Premind_BE.domain.interview.dto.request.PracticeSubmitReqDto;
-import com.example.Premind_BE.domain.interview.dto.response.PortfolioResDto;
-import com.example.Premind_BE.domain.interview.dto.response.PracticeQuestionResDto;
-import com.example.Premind_BE.domain.interview.dto.response.PracticeSubmitResDto;
-import com.example.Premind_BE.domain.interview.dto.response.ResumeResDto;
+import com.example.Premind_BE.domain.interview.dto.response.*;
 import com.example.Premind_BE.domain.interview.service.PracticeInterviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -51,4 +48,12 @@ public class InterviewController {
             @PathVariable Long interviewRecordId) {
         return practiceInterviewService.practiceQuestionSubmit(reqDto, interviewRecordId);
     }
+
+    @Operation(summary = "복습모드: 복습면접을 진행하기 위해 이전 면접 목록조회")
+    @Parameter(name = "interviewMode", in = ParameterIn.QUERY, description = "면접 모드 (전체, 실전모드, 연습모드, 반복모드)", required = true)
+    @GetMapping(value = "/previous/records")
+    public List<PreviousRecordsResDto> previousRecords(@RequestParam String interviewMode) {
+        return practiceInterviewService.previousRecords(interviewMode);
+    }
+
 }

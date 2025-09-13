@@ -4,6 +4,7 @@ import com.example.Premind_BE.domain.interview.dao.InterviewQARepository;
 import com.example.Premind_BE.domain.interview.dao.InterviewRecordRepository;
 import com.example.Premind_BE.domain.interview.dao.TotalFeedbackRepository;
 import com.example.Premind_BE.domain.interview.domain.*;
+import com.example.Premind_BE.domain.interview.dto.response.PreviousRecordsResDto;
 import com.example.Premind_BE.domain.interview.dto.ai.request.StartPracticeItem;
 import com.example.Premind_BE.domain.interview.dto.ai.request.StartPracticeRequest;
 import com.example.Premind_BE.domain.interview.dto.ai.response.*;
@@ -247,4 +248,18 @@ public class PracticeInterviewService {
         return duration.toMillis() / 1000.0;
     }
 
+    public List<PreviousRecordsResDto> previousRecords(String interviewMode) {
+        InterviewModeType modeType = null;
+
+        if (interviewMode != null && !interviewMode.isBlank()) {
+            try {
+                modeType = InterviewModeType.valueOf(interviewMode.toUpperCase());
+                // PRACTICE / REAL / REVIEW 문자열을 enum으로 변환
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("❌ 지원하지 않는 면접 모드입니다: " + interviewMode);
+            }
+        }
+
+        return interviewRecordRepository.findByAllRecord(modeType);
+    }
 }
