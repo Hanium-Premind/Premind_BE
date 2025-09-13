@@ -31,7 +31,6 @@ import java.util.stream.Collectors;
 public class UserService{
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final InterestJobRepository interestJobRepository;
     private final SmsService smsService;
     private final UserUtil userUtil;
     private final RedisUtil redisUtil;
@@ -83,18 +82,13 @@ public class UserService{
     public PersonalInfoResDto personalInfo() {
         User currentMember = userUtil.getCurrentUser();
 
-        List<String> jobNames = interestJobRepository.findByUser(currentMember)
-                .stream()
-                .map(InterestJob::getJob)
-                .collect(Collectors.toList());
-
         return PersonalInfoResDto.builder()
                 .username(currentMember.getUsername())
                 .name(currentMember.getName())
                 .birth(currentMember.getBirth().toString())
                 .gender(currentMember.getGender().toString())
                 .phoneNumber(currentMember.getPhoneNumber())
-                .interestJobs(jobNames)
+                .email(currentMember.getEmail())
                 .build();
     }
 

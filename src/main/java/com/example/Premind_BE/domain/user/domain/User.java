@@ -55,6 +55,9 @@ public class User {
         this.name = dto.getName();
         this.birth = dto.getBirthAsLocalDate();
         this.gender = dto.getGender();
+        this.email = dto.getEmail();
+        this.phoneNumber = dto.getPhoneNumber();
+        this.username = dto.getUsername();
     }
 
 }

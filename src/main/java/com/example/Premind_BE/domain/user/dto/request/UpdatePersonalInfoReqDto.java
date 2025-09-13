@@ -24,6 +24,10 @@ public class UpdatePersonalInfoReqDto {
      @Schema(description = "사용자 성별, FEMALE, MALE 값으로 전송")
      private Gender gender;
 
+     private String email;
+     private String phoneNumber;
+     private String username;
+
      public LocalDate getBirthAsLocalDate() {
           return LocalDate.parse(this.birth, DateTimeFormatter.ofPattern("yyyyMMdd"));
      }

@@ -24,6 +24,6 @@ public class PersonalInfoResDto {
     private String gender;
     @Schema(description = "기존 사용자 전화번호 (변경 불가)")
     private String phoneNumber;
-    @Schema(description = "기존 사용자 관심 직무")
-    private List<String> interestJobs;
+    @Schema(description = "사용자 이메일")
+    private String email;
 }
