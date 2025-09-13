@@ -24,6 +24,7 @@ public class InterviewRecordRepositoryCustomImpl implements InterviewRecordRepos
         QInterviewRecord interviewRecord = QInterviewRecord.interviewRecord;
         QTotalFeedback totalFeedback = QTotalFeedback.totalFeedback;
 
+        // ✅ 조건 빌더
         BooleanBuilder builder = new BooleanBuilder();
         if (interviewMode != null && !interviewMode.isBlank()) {
             try {
@@ -39,9 +40,9 @@ public class InterviewRecordRepositoryCustomImpl implements InterviewRecordRepos
                         PreviousRecordsResDto.class,
                         interviewRecord.id,
                         interviewRecord.createdDate,
-                        interviewRecord.jobMinor.name,  // 직무명
+                        interviewRecord.jobMinor.name, // 직무명
 
-                        // ✅ company: resume.company → 없으면 portfolio.company → 둘 다 없으면 null
+                        // company
                         Expressions.stringTemplate(
                                 "CASE " +
                                         "WHEN {0} IS NOT NULL THEN {1} " +
@@ -51,7 +52,7 @@ public class InterviewRecordRepositoryCustomImpl implements InterviewRecordRepos
                                 interviewRecord.portfolio, interviewRecord.portfolio.company
                         ),
 
-                        // ✅ data: resume 존재 → '자기소개서', portfolio 존재 → '포트폴리오', 둘 다 없으면 null
+                        // data
                         Expressions.stringTemplate(
                                 "CASE " +
                                         "WHEN {0} IS NOT NULL THEN '자기소개서' " +
@@ -66,9 +67,12 @@ public class InterviewRecordRepositoryCustomImpl implements InterviewRecordRepos
                 ))
                 .from(interviewRecord)
                 .leftJoin(totalFeedback).on(totalFeedback.interviewRecord.eq(interviewRecord))
+                .leftJoin(interviewRecord.jobMinor)
+                .leftJoin(interviewRecord.resume)
+                .leftJoin(interviewRecord.portfolio)
                 .where(builder)
                 .orderBy(interviewRecord.createdDate.desc())
                 .fetch();
-    }
 
+    }
 }

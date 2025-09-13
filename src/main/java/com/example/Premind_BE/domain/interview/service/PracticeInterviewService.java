@@ -249,16 +249,6 @@ public class PracticeInterviewService {
     }
 
     public List<PreviousRecordsResDto> previousRecords(String interviewMode) {
-        InterviewModeType modeType = null;
-
-        if (interviewMode != null && !interviewMode.isBlank()) {
-            try {
-                modeType = InterviewModeType.valueOf(interviewMode.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("❌ 지원하지 않는 면접 모드입니다: " + interviewMode);
-            }
-        }
-
         return interviewRecordRepository.findByAllRecord(interviewMode); // String 그대로 넘김
     }
 
