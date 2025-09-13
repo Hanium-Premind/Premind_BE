@@ -53,6 +53,7 @@ public class UserService{
                         .username(registerReqDto.getUsername())
                         .password(bCryptPasswordEncoder.encode(registerReqDto.getPassword()))
                         .name(registerReqDto.getName())
+                        .email(registerReqDto.getEmail())
                         .birth(registerReqDto.getBirthAsLocalDate())
                         .gender(registerReqDto.getGender())
                         .phoneNumber(phoneNumber)

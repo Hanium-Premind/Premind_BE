@@ -21,10 +21,11 @@ public class PasswordController {
     private final PasswordService passwordService;
 
     @Operation(summary = "비밀번호 찾기에서 이메일 확인하기", description = "비밀번호 찾기에서 이미 가입한 사용자만이 비밀번호 찾기를 할 수 있다.")
-    @Parameter(name = "username", description = "찾고자하는 계정의 이메일")
+    @Parameter(name = "username", description = "찾고자하는 계정의 아이디")
+    @Parameter(name = "email", description = "찾고자하는 계정의 이메일")
     @GetMapping("/username/check")
-    public MessageDto usernameCheck(@RequestParam String username) {
-        return passwordService.usernameCheck(username);
+    public MessageDto usernameCheck(@RequestParam String username, @RequestParam String email) {
+        return passwordService.usernameCheck(username, email);
     }
 
     @Operation(summary = "비밀번호 찾기에서 인증번호 받기", description = "비밀번호 찾기에서 인증번호 받기")

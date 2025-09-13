@@ -28,8 +28,8 @@ public class PasswordService {
     private final RedisUtil redisUtil;
     private final UserUtil userUtil;
 
-    public MessageDto usernameCheck(String username) {
-        if(userRepository.existsByUsername(username)) return new MessageDto("존재하는 아이디 정보입니다.");
+    public MessageDto usernameCheck(String username, String email) {
+        if(userRepository.existsByUsernameAndEmail(username, email)) return new MessageDto("존재하는 아이디 정보입니다.");
         else throw new CustomException(ErrorCode.EMAIL_NOT_EXIST);
     }
 

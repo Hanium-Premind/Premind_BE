@@ -17,6 +17,8 @@ import java.util.List;
 public class RegisterReqDto {
     @Schema(description = "사용자 아이디")
     private String username;
+    @Schema(description = "사용자 이메일")
+    private String email;
     @Schema(description = "사용자 비밀번호")
     private String password;
     @Schema(description = "사용자 이름")

@@ -42,7 +42,7 @@ public class UserController {
     @PostMapping("/verify/code")
     public MessageDto verifyCode(@Valid @RequestBody RegisterVerifyCodeReqDto registerVerifyCodeReqDto) {
          userService.verifyCode(registerVerifyCodeReqDto);
-         return new MessageDto("인증번호이 완료되었습니다.");
+         return new MessageDto("인증이 완료되었습니다.");
     }
 
     @Operation(summary = "회원가입을 위한 요청", description = "전화번호 인증이 완료된 사용자만이 회원가입이 가능하다.")
